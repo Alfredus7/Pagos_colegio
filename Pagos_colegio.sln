@@ -5,6 +5,12 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pagos_colegio_Web", "Pagos_colegio_Web\Pagos_colegio_Web.csproj", "{C2D62E83-E323-7D0E-A8E8-E6BF55288E5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pagos_colegio_Infrastructure", "pagos_colegio_Infrastructure\pagos_colegio_Infrastructure.csproj", "{1ED548E1-4B89-CE2C-A12E-443E786E4D21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pagos_colegio_Domain", "pagos_colegio_Domain\pagos_colegio_Domain.csproj", "{718B796D-951F-390C-52B3-FA813C1E8511}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pagos_colegio_Application", "pagos_colegio_Application\pagos_colegio_Application.csproj", "{EFEAD6E3-1C3A-F5C5-77CD-3E10BA4F1E3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{C2D62E83-E323-7D0E-A8E8-E6BF55288E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2D62E83-E323-7D0E-A8E8-E6BF55288E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2D62E83-E323-7D0E-A8E8-E6BF55288E5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ED548E1-4B89-CE2C-A12E-443E786E4D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED548E1-4B89-CE2C-A12E-443E786E4D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED548E1-4B89-CE2C-A12E-443E786E4D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED548E1-4B89-CE2C-A12E-443E786E4D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{718B796D-951F-390C-52B3-FA813C1E8511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{718B796D-951F-390C-52B3-FA813C1E8511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{718B796D-951F-390C-52B3-FA813C1E8511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{718B796D-951F-390C-52B3-FA813C1E8511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFEAD6E3-1C3A-F5C5-77CD-3E10BA4F1E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFEAD6E3-1C3A-F5C5-77CD-3E10BA4F1E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFEAD6E3-1C3A-F5C5-77CD-3E10BA4F1E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFEAD6E3-1C3A-F5C5-77CD-3E10BA4F1E3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
