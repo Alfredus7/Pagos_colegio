@@ -1,4 +1,4 @@
-namespace RegistroPagos_Web.Models
+namespace pagos_colegio_Core.Models
 {
     public class ErrorViewModel
     {
