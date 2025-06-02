@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace Pagos_colegio.Data.Migrations
+namespace Pagos_colegio_web.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

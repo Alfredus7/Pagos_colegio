@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Pagos_colegio.Data;
+using Pagos_colegio_web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
