@@ -6,7 +6,7 @@ namespace Pagos_colegio_web.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public DbSet<Cuenta> Cuentas { get; set; }
+        
         public DbSet<Familia> Familias { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Tarifa> Tarifas { get; set; }
@@ -20,12 +20,6 @@ namespace Pagos_colegio_web.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Relación 1:1 entre Cuenta y Familia
-            modelBuilder.Entity<Familia>()
-                .HasOne(f => f.Cuenta)
-                .WithOne(c => c.Familia)
-                .HasForeignKey<Familia>(f => f.ID_CUENTA);
         }
 
     }

@@ -3,24 +3,21 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pagos_colegio_web.Data;
 
 #nullable disable
 
-namespace Pagos_colegio_web.Data.Migrations
+namespace Pagos_colegio_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250601234004_inicio")]
-    partial class inicio
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -227,29 +224,6 @@ namespace Pagos_colegio_web.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Cuenta", b =>
-                {
-                    b.Property<int>("ID_CUENTA")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_CUENTA"));
-
-                    b.Property<string>("PIN")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("ID_CUENTA");
-
-                    b.ToTable("Cuentas");
-                });
-
             modelBuilder.Entity("Pagos_colegio_web.Models.Estudiante", b =>
                 {
                     b.Property<int>("ID")
@@ -291,13 +265,13 @@ namespace Pagos_colegio_web.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ID_CUENTA")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID_FAMILIA");
 
-                    b.HasIndex("ID_CUENTA")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Familias");
                 });
@@ -438,13 +412,13 @@ namespace Pagos_colegio_web.Data.Migrations
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Familia", b =>
                 {
-                    b.HasOne("Pagos_colegio_web.Models.Cuenta", "Cuenta")
-                        .WithOne("Familia")
-                        .HasForeignKey("Pagos_colegio_web.Models.Familia", "ID_CUENTA")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cuenta");
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Pago", b =>
@@ -475,12 +449,6 @@ namespace Pagos_colegio_web.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Pago");
-                });
-
-            modelBuilder.Entity("Pagos_colegio_web.Models.Cuenta", b =>
-                {
-                    b.Navigation("Familia")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Estudiante", b =>

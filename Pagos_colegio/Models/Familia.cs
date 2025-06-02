@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Pagos_colegio_web.Models
 {
@@ -14,14 +15,16 @@ namespace Pagos_colegio_web.Models
         [MaxLength(50)]
         public string ApellidoPaterno { get; set; }
 
-        // FK
-        public int ID_CUENTA { get; set; }
+        // Usuario vinculado con Identity
+        [Required]
+        public string UserId { get; set; }
 
-        [ForeignKey("ID_CUENTA")]
-        public virtual Cuenta Cuenta { get; set; }
+        [ForeignKey("UserId")]
+        public virtual IdentityUser Usuario { get; set; }
 
-        // Relaciones
+        // Relación con estudiantes
         public virtual List<Estudiante> Estudiantes { get; set; }
     }
+
 
 }
