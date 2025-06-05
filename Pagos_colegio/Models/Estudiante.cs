@@ -12,12 +12,14 @@ namespace Pagos_colegio_web.Models
         [MaxLength(50)]
         public string Nombre { get; set; }
 
+        // Clave foránea a Familia
         public int FamiliaId { get; set; }
 
         [ForeignKey("FamiliaId")]
-        public virtual Familia Familia { get; set; }
+        public virtual Familia? Familia { get; set; }
 
-        public virtual ICollection<Pago> Pagos { get; set; }
+        // Lista de pagos del estudiante
+        public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
     }
 
 }

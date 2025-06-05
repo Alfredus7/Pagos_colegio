@@ -1,0 +1,30 @@
+﻿@model Pagos_colegio_web.Models.Estudiante
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<form asp-action="Create">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Nombre" class="control-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FamiliaId" class="control-label">Familia (Usuario)</label>
+        <select asp-for="FamiliaId" class="form-control" asp-items="ViewBag.FamiliaId">
+            <option value="">Seleccione una familia</option>
+        </select>
+        <span asp-validation-for="FamiliaId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Crear Estudiante</button>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

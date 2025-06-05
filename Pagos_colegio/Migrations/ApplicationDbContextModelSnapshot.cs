@@ -244,7 +244,7 @@ namespace Pagos_colegio_web.Migrations
 
                     b.HasIndex("FamiliaId");
 
-                    b.ToTable("Estudiantes");
+                    b.ToTable("Estudiantes", (string)null);
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Familia", b =>
@@ -273,7 +273,7 @@ namespace Pagos_colegio_web.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Familias");
+                    b.ToTable("Familias", (string)null);
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Pago", b =>
@@ -299,7 +299,7 @@ namespace Pagos_colegio_web.Migrations
 
                     b.HasIndex("TarifaId");
 
-                    b.ToTable("Pagos");
+                    b.ToTable("Pagos", (string)null);
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Recibo", b =>
@@ -323,7 +323,7 @@ namespace Pagos_colegio_web.Migrations
                     b.HasIndex("ID_PAGO")
                         .IsUnique();
 
-                    b.ToTable("Recibos");
+                    b.ToTable("Recibos", (string)null);
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Tarifa", b =>
@@ -345,7 +345,7 @@ namespace Pagos_colegio_web.Migrations
 
                     b.HasKey("TarifaId");
 
-                    b.ToTable("Tarifas");
+                    b.ToTable("Tarifas", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
