@@ -1,17 +1,25 @@
 ﻿@model Pagos_colegio_web.ViewModels.FamiliaUsuarioViewModel
 
+
 @{
-    ViewData["Title"] = "Crear Familia y Usuario";
+    ViewData["Title"] = "Registrar Familia";
 }
 
-<h1>Crear Familia ✨</h1>
+<h1>Registrar Familia</h1>
 
-<form asp-action="Create" method="post">
-    <div class="row">
-        <div class="col-md-6">
-            <h4>👨‍👩‍👧‍👦 Datos de la Familia</h4>
-            <hr />
+<h4>Datos de la Familia y Usuario</h4>
+<hr />
+<div class="row">
+
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="ApellidoPaterno" class="control-label"></label>
+                <input asp-for="ApellidoPaterno" class="form-control" />
+                <span asp-validation-for="ApellidoPaterno" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
                 <label asp-for="ApellidoMaterno" class="control-label"></label>
@@ -19,16 +27,8 @@
                 <span asp-validation-for="ApellidoMaterno" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="ApellidoPaterno" class="control-label"></label>
-                <input asp-for="ApellidoPaterno" class="form-control" />
-                <span asp-validation-for="ApellidoPaterno" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <h4>🔐 Usuario Asociado</h4>
             <hr />
+
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
@@ -40,16 +40,17 @@
                 <input asp-for="Password" class="form-control" type="password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-        </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Registrar" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
 
-    <div class="form-group mt-4 text-center">
-        <input type="submit" value="Crear Familia + Usuario" class="btn btn-success btn-lg" />
-    </div>
-</form>
+</div>
 
-<div class="mt-4">
-    <a asp-action="Index" class="btn btn-secondary">← Volver al listado</a>
+<div class="mt-3">
+    <a asp-action="Index">Volver al listado</a>
 </div>
 
 @section Scripts {
@@ -57,5 +58,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
 

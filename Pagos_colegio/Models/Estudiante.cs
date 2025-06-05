@@ -6,19 +6,18 @@ namespace Pagos_colegio_web.Models
     public class Estudiante
     {
         [Key]
-        public int ID { get; set; }
+        public int EstudianteId { get; set; }
 
         [Required]
         [MaxLength(50)]
         public string Nombre { get; set; }
 
-        // FK
-        public int ID_FAMILIA { get; set; }
+        public int FamiliaId { get; set; }
 
-        [ForeignKey("ID_FAMILIA")]
+        [ForeignKey("FamiliaId")]
         public virtual Familia Familia { get; set; }
 
-        public virtual List<Pago> Pagos { get; set; }
+        public virtual ICollection<Pago> Pagos { get; set; }
     }
 
 }

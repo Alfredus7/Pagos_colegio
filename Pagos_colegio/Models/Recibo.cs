@@ -11,7 +11,7 @@ namespace Pagos_colegio_web.Models
         [MaxLength(100)]
         public string Descripcion { get; set; }
 
-        // FK Pago
+        // FK Pago de donde saldra el recibo
         public int ID_PAGO { get; set; }
 
         [ForeignKey("ID_PAGO")]

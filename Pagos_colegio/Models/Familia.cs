@@ -7,7 +7,7 @@ namespace Pagos_colegio_web.Models
     public class Familia
     {
         [Key]
-        public int ID_FAMILIA { get; set; }
+        public int FamiliaId { get; set; }
 
         [MaxLength(50)]
         public string ApellidoMaterno { get; set; }
@@ -15,15 +15,17 @@ namespace Pagos_colegio_web.Models
         [MaxLength(50)]
         public string ApellidoPaterno { get; set; }
 
-        // Usuario vinculado con Identity
         [Required]
-        public string UserId { get; set; }
+        public string UsuarioId { get; set; }
 
-        [ForeignKey("UserId")]
+        [ForeignKey("UsuarioId")]
         public virtual IdentityUser Usuario { get; set; }
 
-        // Relación con estudiantes
-        public virtual List<Estudiante> Estudiantes { get; set; }
+        // Propiedad auxiliar para mostrar UserName en vistas
+        [NotMapped]
+        public string NombreUsuario => Usuario?.UserName;
+
+        public virtual ICollection<Estudiante> Estudiantes { get; set; }
     }
 
 

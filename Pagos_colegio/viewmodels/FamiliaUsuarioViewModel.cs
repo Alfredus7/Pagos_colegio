@@ -4,14 +4,16 @@ namespace Pagos_colegio_web.ViewModels
 {
     public class FamiliaUsuarioViewModel
     {
-        // Datos de familia
+        // Datos de la familia
+        [Required]
         public string ApellidoMaterno { get; set; }
 
+        [Required]
         public string ApellidoPaterno { get; set; }
 
         // Datos del usuario asociado
         [Required]
-        [EmailAddress]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required]

@@ -6,21 +6,19 @@ namespace Pagos_colegio_web.Models
     public class Pago
     {
         [Key]
-        public int ID { get; set; }
+        public int PagoId { get; set; }
 
         [Required]
         public DateTime FechaPago { get; set; }
 
-        // FK Estudiante
-        public int ID_ESTUDIANTE { get; set; }
+        public int EstudianteId { get; set; }
 
-        [ForeignKey("ID_ESTUDIANTE")]
+        [ForeignKey("EstudianteId")]
         public virtual Estudiante Estudiante { get; set; }
 
-        // FK Tarifa
-        public int ID_TARIFA { get; set; }
+        public int TarifaId { get; set; }
 
-        [ForeignKey("ID_TARIFA")]
+        [ForeignKey("TarifaId")]
         public virtual Tarifa Tarifa { get; set; }
 
         public virtual Recibo Recibo { get; set; }

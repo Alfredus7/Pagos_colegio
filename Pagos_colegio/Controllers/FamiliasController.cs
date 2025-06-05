@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
@@ -25,20 +26,25 @@ namespace Pagos_colegio_web.Controllers
         // GET: Familias
         public async Task<IActionResult> Index()
         {
-            var familias = _context.Familias.Include(f => f.Usuario);
-            return View(await familias.ToListAsync());
+            var applicationDbContext = _context.Familias.Include(f => f.Usuario);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Familias/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var familia = await _context.Familias
                 .Include(f => f.Usuario)
-                .FirstOrDefaultAsync(m => m.ID_FAMILIA == id);
-
-            if (familia == null) return NotFound();
+                .FirstOrDefaultAsync(m => m.FamiliaId == id);
+            if (familia == null)
+            {
+                return NotFound();
+            }
 
             return View(familia);
         }
@@ -46,36 +52,45 @@ namespace Pagos_colegio_web.Controllers
         // GET: Familias/Create
         public IActionResult Create()
         {
+            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Familias/Create (Crea usuario + familia)
+        // POST: Familias/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FamiliaUsuarioViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Crear usuario
-                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                // 1. Crear usuario
+                var usuario = new IdentityUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+
+                var result = await _userManager.CreateAsync(usuario, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Crear familia asociada al usuario
+                    // 2. Crear familia y vincular usuario
                     var familia = new Familia
                     {
                         ApellidoMaterno = model.ApellidoMaterno,
                         ApellidoPaterno = model.ApellidoPaterno,
-                        UserId = user.Id
+                        UsuarioId = usuario.Id
                     };
 
-                    _context.Familias.Add(familia);
+                    _context.Add(familia);
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(Index));
                 }
 
+                // Si hubo errores al crear el usuario
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -89,20 +104,31 @@ namespace Pagos_colegio_web.Controllers
         // GET: Familias/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var familia = await _context.Familias.FindAsync(id);
-            if (familia == null) return NotFound();
-
+            if (familia == null)
+            {
+                return NotFound();
+            }
+            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id", familia.UsuarioId);
             return View(familia);
         }
 
         // POST: Familias/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID_FAMILIA,ApellidoMaterno,ApellidoPaterno,UserId")] Familia familia)
+        public async Task<IActionResult> Edit(int id, [Bind("FamiliaId,ApellidoMaterno,ApellidoPaterno,UsuarioId")] Familia familia)
         {
-            if (id != familia.ID_FAMILIA) return NotFound();
+            if (id != familia.FamiliaId)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -113,7 +139,7 @@ namespace Pagos_colegio_web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FamiliaExists(familia.ID_FAMILIA))
+                    if (!FamiliaExists(familia.FamiliaId))
                     {
                         return NotFound();
                     }
@@ -124,20 +150,25 @@ namespace Pagos_colegio_web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
+            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id", familia.UsuarioId);
             return View(familia);
         }
 
         // GET: Familias/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var familia = await _context.Familias
                 .Include(f => f.Usuario)
-                .FirstOrDefaultAsync(m => m.ID_FAMILIA == id);
-
-            if (familia == null) return NotFound();
+                .FirstOrDefaultAsync(m => m.FamiliaId == id);
+            if (familia == null)
+            {
+                return NotFound();
+            }
 
             return View(familia);
         }
@@ -151,15 +182,15 @@ namespace Pagos_colegio_web.Controllers
             if (familia != null)
             {
                 _context.Familias.Remove(familia);
-                await _context.SaveChangesAsync();
             }
 
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool FamiliaExists(int id)
         {
-            return _context.Familias.Any(e => e.ID_FAMILIA == id);
+            return _context.Familias.Any(e => e.FamiliaId == id);
         }
     }
 }
