@@ -26,8 +26,19 @@ namespace Pagos_colegio_web.Controllers
         // GET: Familias
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Familias.Include(f => f.Usuario);
-            return View(await applicationDbContext.ToListAsync());
+            var familias = await _context.Familias
+                .Include(f => f.Usuario)
+                .Select(f => new FamiliaUsuarioViewModel
+                {
+                    FamiliaId = f.FamiliaId,
+                    ApellidoPaterno = f.ApellidoPaterno,
+                    ApellidoMaterno = f.ApellidoMaterno,
+                    NombreUsuario = f.Usuario.UserName,
+                    Email = f.Usuario.Email
+                })
+                .ToListAsync();
+
+            return View(familias);
         }
 
         // GET: Familias/Details/5

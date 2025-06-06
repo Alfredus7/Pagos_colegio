@@ -1,47 +1,41 @@
-﻿@model IEnumerable<Pagos_colegio_web.Models.Familia>
+﻿@model IEnumerable<Pagos_colegio_web.ViewModels.FamiliaUsuarioViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Listado de Familias";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Crear Nueva Familia</a>
 </p>
-<table class="table">
-    <thead>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ApellidoMaterno)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ApellidoPaterno)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Usuario)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.ApellidoPaterno)</th>
+            <th>@Html.DisplayNameFor(model => model.ApellidoMaterno)</th>
+            <th>@Html.DisplayNameFor(model => model.NombreUsuario)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApellidoMaterno)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApellidoPaterno)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Usuario.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FamiliaId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FamiliaId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FamiliaId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ApellidoPaterno)</td>
+                <td>@Html.DisplayFor(modelItem => item.ApellidoMaterno)</td>
+                <td>@Html.DisplayFor(modelItem => item.NombreUsuario)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a asp-action="Edit" asp-route-id="@item.FamiliaId" class="btn btn-warning">Editar</a>
+                        <a asp-action="Details" asp-route-id="@item.FamiliaId" class="btn btn-info">Detalles</a>
+                        <a asp-action="Delete" asp-route-id="@item.FamiliaId" class="btn btn-danger">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
