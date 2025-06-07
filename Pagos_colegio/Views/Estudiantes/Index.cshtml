@@ -30,6 +30,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Familia.NombreUsuario)
             </td>
+                <td>
+                    <a asp-action="HistorialPagos" asp-route-id="@item.EstudianteId" class="btn btn-info btn-sm">
+                        Ver historial Pagos
+                    </a>
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.EstudianteId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.EstudianteId">Details</a> |

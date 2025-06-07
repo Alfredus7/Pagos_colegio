@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
+using Pagos_colegio_web.ViewModels;
 
 namespace Pagos_colegio_web.Controllers
 {
@@ -14,17 +17,52 @@ namespace Pagos_colegio_web.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public EstudiantesController(ApplicationDbContext context)
+        // Inyecta UserManager en tu constructor si no lo tienes ya:
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public EstudiantesController(
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Estudiantes
+
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Estudiantes.Include(e => e.Familia);
+            var familias = _context.Familias.Include(f => f.Usuario).ToList();
+
+            ViewBag.FamiliaId = new SelectList(
+                familias,
+                "FamiliaId",
+                "NombreUsuario" // propiedad calculada
+            );
             return View(await applicationDbContext.ToListAsync());
         }
+
+        public async Task<IActionResult> VerHijos()
+        {
+            var usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                return Unauthorized();
+            }
+
+            var familia = await _context.Familias
+                .Include(f => f.Estudiantes)
+                .FirstOrDefaultAsync(f => f.UsuarioId == usuario.Id);
+
+            if (familia == null)
+            {
+                return NotFound("No se encontró una familia asociada al usuario actual.");
+            }
+
+            return View("Index", familia.Estudiantes);
+        }
+
 
         // GET: Estudiantes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -168,5 +206,23 @@ namespace Pagos_colegio_web.Controllers
         {
             return _context.Estudiantes.Any(e => e.EstudianteId == id);
         }
+
+        public async Task<IActionResult> HistorialPagos(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var estudiante = await _context.Estudiantes
+                .Include(e => e.Familia)
+                .Include(e => e.Pagos)
+                    .ThenInclude(p => p.Tarifa)
+                .Include(e => e.Pagos)
+                    .ThenInclude(p => p.Recibo)
+                .FirstOrDefaultAsync(e => e.EstudianteId == id);
+
+            if (estudiante == null) return NotFound();
+
+            return View(estudiante);
+        }
+
     }
 }

@@ -1,0 +1,36 @@
+﻿@model Pagos_colegio_web.Models.Estudiante
+
+@{
+    ViewData["Title"] = "Historial de Pagos";
+}
+
+<h2>Historial de Pagos - @Model.NombreCompleto</h2>
+
+@if (Model.Pagos != null && Model.Pagos.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Fecha de Pago</th>
+                <th>Monto</th>
+                <th>Periodo</th>
+                <th>Recibo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pago in Model.Pagos.OrderByDescending(p => p.FechaPago))
+            {
+                <tr>
+                    <td>@pago.FechaPago.ToShortDateString()</td>
+                    <td>@pago.Tarifa?.Monto.ToString("C")</td>
+                    <td>@pago.Tarifa?.Periodo</td>
+                    <td>@pago.Recibo?.CodigoRecibo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">No hay pagos registrados para este estudiante.</div>
+}

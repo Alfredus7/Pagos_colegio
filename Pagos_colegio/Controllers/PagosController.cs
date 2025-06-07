@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace Pagos_colegio_web.Controllers
     public class PagosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public PagosController(ApplicationDbContext context)
+        public PagosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Pagos
@@ -166,5 +169,36 @@ namespace Pagos_colegio_web.Controllers
         {
             return _context.Pagos.Any(e => e.PagoId == id);
         }
+
+        public async Task<IActionResult> IndexFamilia()
+        {
+            // Obtener el usuario actual
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            // Buscar la familia asociada al usuario actual (UsuarioId == user.Id)
+            var familia = await _context.Familias
+                .Include(f => f.Estudiantes)
+                .FirstOrDefaultAsync(f => f.UsuarioId == user.Id);
+
+            if (familia == null)
+                return NotFound("No se encontró una familia asociada a este usuario.");
+
+            // Obtener los IDs de los estudiantes de esa familia
+            var estudianteIds = familia.Estudiantes.Select(e => e.EstudianteId).ToList();
+
+            // Filtrar pagos de los estudiantes de esa familia
+            var pagos = await _context.Pagos
+                .Include(p => p.Estudiante)
+                    .ThenInclude(e => e.Familia) // Por si necesitas mostrar nombre completo
+                .Include(p => p.Tarifa)
+                .Include(p => p.Recibo)
+                .Where(p => estudianteIds.Contains(p.EstudianteId))
+                .ToListAsync();
+
+            return View(pagos); // Asegúrate de tener la vista correspondiente
+        }
+
     }
 }
