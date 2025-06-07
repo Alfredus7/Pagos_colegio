@@ -64,6 +64,46 @@ namespace Pagos_colegio_web.Controllers
         }
 
 
+        // GET: Estudiantes/PagosPendientes
+        public async Task<IActionResult> PagosPendientes()
+        {
+            // 1. Obtener el usuario actual
+            var userId = _userManager.GetUserId(User);
+
+            // 2. Buscar la familia del usuario
+            var familia = await _context.Familias
+                .Include(f => f.Estudiantes)
+                    .ThenInclude(e => e.Pagos)
+                .FirstOrDefaultAsync(f => f.UsuarioId == userId);
+
+            if (familia == null)
+            {
+                return NotFound("No se encontró una familia asociada al usuario actual.");
+            }
+
+            // 3. Obtener tarifas vigentes
+            var tarifasVigentes = await _context.Tarifas
+                .Where(t => t.FechaInicio <= DateTime.Now && t.FechaFin >= DateTime.Now)
+                .ToListAsync();
+
+            // 4. Determinar los pagos pendientes
+            var pagosPendientes = new List<(Estudiante estudiante, Tarifa tarifa)>();
+
+            foreach (var estudiante in familia.Estudiantes)
+            {
+                foreach (var tarifa in tarifasVigentes)
+                {
+                    bool yaPagado = estudiante.Pagos.Any(p => p.TarifaId == tarifa.TarifaId);
+                    if (!yaPagado)
+                    {
+                        pagosPendientes.Add((estudiante, tarifa));
+                    }
+                }
+            }
+
+            return View(pagosPendientes);
+        }
+
         // GET: Estudiantes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
