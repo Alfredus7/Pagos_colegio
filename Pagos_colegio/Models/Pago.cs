@@ -21,7 +21,7 @@ namespace Pagos_colegio_web.Models
 
         [ForeignKey("EstudianteId")]
         [Display(Name = "Estudiante")]
-        public virtual Estudiante Estudiante { get; set; }
+        public virtual Estudiante? Estudiante { get; set; }
 
         [Required(ErrorMessage = "Debe seleccionar una tarifa")]
         [Display(Name = "Tarifa")]
@@ -29,10 +29,10 @@ namespace Pagos_colegio_web.Models
 
         [ForeignKey("TarifaId")]
         [Display(Name = "Tarifa")]
-        public virtual Tarifa Tarifa { get; set; }
+        public virtual Tarifa? Tarifa { get; set; }
 
         [Display(Name = "Recibo")]
-        public virtual Recibo Recibo { get; set; }
+        public virtual Recibo? Recibo { get; set; }
 
         [NotMapped]
         [Display(Name = "Monto Pagado")]
