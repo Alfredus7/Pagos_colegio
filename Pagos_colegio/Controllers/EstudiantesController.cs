@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
-using Pagos_colegio_web.ViewModels;
 
 namespace Pagos_colegio_web.Controllers
 {
     public class EstudiantesController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        // Inyecta UserManager en tu constructor si no lo tienes ya:
         private readonly UserManager<IdentityUser> _userManager;
 
         public EstudiantesController(
@@ -28,8 +20,11 @@ namespace Pagos_colegio_web.Controllers
             _userManager = userManager;
         }
 
-        // GET: Estudiantes
+        // ============================================
+        // 1. Listado General
+        // ============================================
 
+        // Vista principal para administradores
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Estudiantes.Include(e => e.Familia);
@@ -40,53 +35,47 @@ namespace Pagos_colegio_web.Controllers
                 "FamiliaId",
                 "NombreUsuario" // propiedad calculada
             );
+
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // Vista para usuarios con rol familia (solo ven sus hijos)
         public async Task<IActionResult> VerHijos()
         {
             var usuario = await _userManager.GetUserAsync(User);
-            if (usuario == null)
-            {
-                return Unauthorized();
-            }
+            if (usuario == null) return Unauthorized();
 
             var familia = await _context.Familias
                 .Include(f => f.Estudiantes)
                 .FirstOrDefaultAsync(f => f.UsuarioId == usuario.Id);
 
             if (familia == null)
-            {
                 return NotFound("No se encontró una familia asociada al usuario actual.");
-            }
 
             return View("Index", familia.Estudiantes);
         }
 
+        // ============================================
+        // 2. Consultas de pagos y deudas
+        // ============================================
 
-        // GET: Estudiantes/PagosPendientes
+        // Consulta de pagos pendientes (HU-003)
         public async Task<IActionResult> PagosPendientes()
         {
-            // 1. Obtener el usuario actual
             var userId = _userManager.GetUserId(User);
 
-            // 2. Buscar la familia del usuario
             var familia = await _context.Familias
                 .Include(f => f.Estudiantes)
                     .ThenInclude(e => e.Pagos)
                 .FirstOrDefaultAsync(f => f.UsuarioId == userId);
 
             if (familia == null)
-            {
                 return NotFound("No se encontró una familia asociada al usuario actual.");
-            }
 
-            // 3. Obtener tarifas vigentes
             var tarifasVigentes = await _context.Tarifas
                 .Where(t => t.FechaInicio <= DateTime.Now && t.FechaFin >= DateTime.Now)
                 .ToListAsync();
 
-            // 4. Determinar los pagos pendientes
             var pagosPendientes = new List<(Estudiante estudiante, Tarifa tarifa)>();
 
             foreach (var estudiante in familia.Estudiantes)
@@ -104,24 +93,7 @@ namespace Pagos_colegio_web.Controllers
             return View(pagosPendientes);
         }
 
-        // GET: Estudiantes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var estudiante = await _context.Estudiantes
-                .Include(e => e.Familia)
-                .FirstOrDefaultAsync(m => m.EstudianteId == id);
-            if (estudiante == null)
-            {
-                return NotFound();
-            }
-
-            return View(estudiante);
-        }
+        // Reportes: historial, deuda acumulada y pagos del mes (HU-007)
         public async Task<IActionResult> Reportes()
         {
             var userId = _userManager.GetUserId(User);
@@ -133,9 +105,7 @@ namespace Pagos_colegio_web.Controllers
                 .FirstOrDefaultAsync(f => f.UsuarioId == userId);
 
             if (familia == null)
-            {
                 return NotFound("No se encontró una familia asociada al usuario actual.");
-            }
 
             var estudiantes = familia.Estudiantes;
 
@@ -151,7 +121,7 @@ namespace Pagos_colegio_web.Controllers
                 .OrderBy(p => p.Fecha)
                 .ToList();
 
-            // 2. Deuda acumulada (tarifas no pagadas)
+            // 2. Deuda acumulada
             var tarifas = await _context.Tarifas
                 .Where(t => t.FechaFin < DateTime.Now)
                 .ToListAsync();
@@ -197,6 +167,39 @@ namespace Pagos_colegio_web.Controllers
             return View(modelo);
         }
 
+        // Historial de pagos por estudiante
+        public async Task<IActionResult> HistorialPagos(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var estudiante = await _context.Estudiantes
+                .Include(e => e.Familia)
+                .Include(e => e.Pagos).ThenInclude(p => p.Tarifa)
+                .Include(e => e.Pagos).ThenInclude(p => p.Recibo)
+                .FirstOrDefaultAsync(e => e.EstudianteId == id);
+
+            if (estudiante == null) return NotFound();
+
+            return View(estudiante);
+        }
+
+        // ============================================
+        // 3. CRUD: Crear, Editar, Detalles y Eliminar
+        // ============================================
+
+        // GET: Estudiantes/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var estudiante = await _context.Estudiantes
+                .Include(e => e.Familia)
+                .FirstOrDefaultAsync(m => m.EstudianteId == id);
+
+            if (estudiante == null) return NotFound();
+
+            return View(estudiante);
+        }
 
         // GET: Estudiantes/Create
         public IActionResult Create()
@@ -206,16 +209,13 @@ namespace Pagos_colegio_web.Controllers
             ViewBag.FamiliaId = new SelectList(
                 familias,
                 "FamiliaId",
-                "NombreUsuario" // propiedad calculada
+                "NombreUsuario"
             );
 
             return View();
         }
 
-
         // POST: Estudiantes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EstudianteId,Nombre,FamiliaId")] Estudiante estudiante)
@@ -226,6 +226,7 @@ namespace Pagos_colegio_web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["FamiliaId"] = new SelectList(_context.Familias, "FamiliaId", "UsuarioId", estudiante.FamiliaId);
             return View(estudiante);
         }
@@ -233,31 +234,21 @@ namespace Pagos_colegio_web.Controllers
         // GET: Estudiantes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var estudiante = await _context.Estudiantes.FindAsync(id);
-            if (estudiante == null)
-            {
-                return NotFound();
-            }
+            if (estudiante == null) return NotFound();
+
             ViewData["FamiliaId"] = new SelectList(_context.Familias, "FamiliaId", "UsuarioId", estudiante.FamiliaId);
             return View(estudiante);
         }
 
         // POST: Estudiantes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId")] Estudiante estudiante)
         {
-            if (id != estudiante.EstudianteId)
-            {
-                return NotFound();
-            }
+            if (id != estudiante.EstudianteId) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -269,16 +260,13 @@ namespace Pagos_colegio_web.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!EstudianteExists(estudiante.EstudianteId))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["FamiliaId"] = new SelectList(_context.Familias, "FamiliaId", "UsuarioId", estudiante.FamiliaId);
             return View(estudiante);
         }
@@ -286,18 +274,13 @@ namespace Pagos_colegio_web.Controllers
         // GET: Estudiantes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var estudiante = await _context.Estudiantes
                 .Include(e => e.Familia)
                 .FirstOrDefaultAsync(m => m.EstudianteId == id);
-            if (estudiante == null)
-            {
-                return NotFound();
-            }
+
+            if (estudiante == null) return NotFound();
 
             return View(estudiante);
         }
@@ -311,33 +294,16 @@ namespace Pagos_colegio_web.Controllers
             if (estudiante != null)
             {
                 _context.Estudiantes.Remove(estudiante);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        // Utilidad: Verifica si existe el estudiante
         private bool EstudianteExists(int id)
         {
             return _context.Estudiantes.Any(e => e.EstudianteId == id);
         }
-
-        public async Task<IActionResult> HistorialPagos(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var estudiante = await _context.Estudiantes
-                .Include(e => e.Familia)
-                .Include(e => e.Pagos)
-                    .ThenInclude(p => p.Tarifa)
-                .Include(e => e.Pagos)
-                    .ThenInclude(p => p.Recibo)
-                .FirstOrDefaultAsync(e => e.EstudianteId == id);
-
-            if (estudiante == null) return NotFound();
-
-            return View(estudiante);
-        }
-
     }
 }
