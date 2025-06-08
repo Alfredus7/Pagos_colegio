@@ -69,7 +69,7 @@ static async Task CrearRoles(IServiceProvider serviceProvider)
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-    string[] roles = { "Admin", "Usuario" };
+    string[] roles = { "Admin", "Usuario", "Familia" }; // 👈 Se agregó "FAMILIA"
 
     foreach (var role in roles)
     {
@@ -100,5 +100,6 @@ static async Task CrearRoles(IServiceProvider serviceProvider)
         }
     }
 }
+
 
 

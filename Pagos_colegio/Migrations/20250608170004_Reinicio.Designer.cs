@@ -12,8 +12,8 @@ using Pagos_colegio_web.Data;
 namespace Pagos_colegio_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250605113037_inicio")]
-    partial class inicio
+    [Migration("20250608170004_Reinicio")]
+    partial class Reinicio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -305,30 +305,6 @@ namespace Pagos_colegio_web.Migrations
                     b.ToTable("Pagos");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Recibo", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("ID_PAGO")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ID_PAGO")
-                        .IsUnique();
-
-                    b.ToTable("Recibos");
-                });
-
             modelBuilder.Entity("Pagos_colegio_web.Models.Tarifa", b =>
                 {
                     b.Property<int>("TarifaId")
@@ -342,6 +318,11 @@ namespace Pagos_colegio_web.Migrations
 
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Gestion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(10, 2)");
@@ -443,17 +424,6 @@ namespace Pagos_colegio_web.Migrations
                     b.Navigation("Tarifa");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Recibo", b =>
-                {
-                    b.HasOne("Pagos_colegio_web.Models.Pago", "Pago")
-                        .WithOne("Recibo")
-                        .HasForeignKey("Pagos_colegio_web.Models.Recibo", "ID_PAGO")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pago");
-                });
-
             modelBuilder.Entity("Pagos_colegio_web.Models.Estudiante", b =>
                 {
                     b.Navigation("Pagos");
@@ -462,12 +432,6 @@ namespace Pagos_colegio_web.Migrations
             modelBuilder.Entity("Pagos_colegio_web.Models.Familia", b =>
                 {
                     b.Navigation("Estudiantes");
-                });
-
-            modelBuilder.Entity("Pagos_colegio_web.Models.Pago", b =>
-                {
-                    b.Navigation("Recibo")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Pagos_colegio_web.Models.Tarifa", b =>

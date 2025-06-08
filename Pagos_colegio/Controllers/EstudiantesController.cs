@@ -175,7 +175,6 @@ namespace Pagos_colegio_web.Controllers
             var estudiante = await _context.Estudiantes
                 .Include(e => e.Familia)
                 .Include(e => e.Pagos).ThenInclude(p => p.Tarifa)
-                .Include(e => e.Pagos).ThenInclude(p => p.Recibo)
                 .FirstOrDefaultAsync(e => e.EstudianteId == id);
 
             if (estudiante == null) return NotFound();

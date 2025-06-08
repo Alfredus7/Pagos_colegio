@@ -11,7 +11,6 @@ namespace Pagos_colegio_web.Data
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Tarifa> Tarifas { get; set; }
         public DbSet<Pago> Pagos { get; set; }
-        public DbSet<Recibo> Recibos { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

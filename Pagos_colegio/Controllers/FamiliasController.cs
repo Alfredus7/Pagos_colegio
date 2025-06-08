@@ -89,7 +89,10 @@ namespace Pagos_colegio_web.Controllers
 
                 if (result.Succeeded)
                 {
-                    // 2. Crear familia y vincular usuario
+                    // 2. Asignar rol "Familia"
+                    await _userManager.AddToRoleAsync(usuario, "Familia");
+
+                    // 3. Crear familia y vincular usuario
                     var familia = new Familia
                     {
                         ApellidoMaterno = model.ApellidoMaterno,
@@ -112,6 +115,7 @@ namespace Pagos_colegio_web.Controllers
 
             return View(model);
         }
+
 
 
         // GET: Familias/Edit/5

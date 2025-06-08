@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,6 @@ namespace Pagos_colegio_web.Controllers
         }
 
         // GET: Tarifas
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Tarifas.ToListAsync());
@@ -48,21 +46,34 @@ namespace Pagos_colegio_web.Controllers
         // GET: Tarifas/Create
         public IActionResult Create()
         {
-            return View();
+            // Calcular cuántas gestiones hay del mismo año
+            int anioActual = DateTime.Now.Year;
+            int conteo = _context.Tarifas
+                .Count(t => t.FechaInicio.Year == anioActual);
+
+            var tarifa = new Tarifa
+            {
+                FechaInicio = DateTime.Now,
+                FechaFin = DateTime.Now.AddMonths(1),
+                Gestion = $"Gestión {conteo + 1} - {anioActual}"
+            };
+
+            return View(tarifa);
         }
+
 
         // POST: Tarifas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TarifaId,FechaInicio,FechaFin,Monto")] Tarifa tarifa)
+        public async Task<IActionResult> Create([Bind("TarifaId,FechaInicio,FechaFin,Monto,Gestion")] Tarifa tarifa)
         {
-            tarifa.FechaFin = new DateTime(1/1/0001);
+            tarifa.FechaFin = new DateTime(1, 1, 1);
 
-            DateTime fechaNull = new DateTime(1/1/0001);
+            DateTime fechaNull = new DateTime(1, 1, 1);
 
-            Tarifa? tarifAnterior = await _context.Tarifas.FirstOrDefaultAsync(i => i.FechaFin.Year == fechaNull.Year);
+            var tarifAnterior = await _context.Tarifas.FirstOrDefaultAsync(i => i.FechaFin.Year == fechaNull.Year);
 
             if (tarifAnterior != null)
             {
@@ -70,14 +81,26 @@ namespace Pagos_colegio_web.Controllers
                 _context.Update(tarifAnterior);
             }
 
+            // Obtener año de la nueva tarifa
+            int anio = tarifa.FechaInicio.Year;
+
+            // Contar cuántas gestiones existen para ese año
+            int cantidad = await _context.Tarifas.CountAsync(t => t.FechaInicio.Year == anio);
+
+            // Asignar la gestión automáticamente
+            tarifa.Gestion = $"Gestión {cantidad + 1} {anio}";
+
             if (ModelState.IsValid)
             {
                 _context.Add(tarifa);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(tarifa);
         }
+
+
 
         // GET: Tarifas/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -100,7 +123,7 @@ namespace Pagos_colegio_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TarifaId,FechaInicio,FechaFin,Monto")] Tarifa tarifa)
+        public async Task<IActionResult> Edit(int id, [Bind("TarifaId,Gestion,FechaInicio,FechaFin,Monto")] Tarifa tarifa)
         {
             if (id != tarifa.TarifaId)
             {

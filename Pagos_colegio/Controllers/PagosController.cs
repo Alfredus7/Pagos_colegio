@@ -54,7 +54,7 @@ namespace Pagos_colegio_web.Controllers
         public IActionResult Create()
         {
             ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "Nombre");
-            ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Monto");
+            ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Gestion");
             return View();
         }
 
@@ -216,7 +216,6 @@ namespace Pagos_colegio_web.Controllers
                 .Include(p => p.Estudiante)
                     .ThenInclude(e => e.Familia) // Por si necesitas mostrar nombre completo
                 .Include(p => p.Tarifa)
-                .Include(p => p.Recibo)
                 .Where(p => estudianteIds.Contains(p.EstudianteId))
                 .ToListAsync();
 

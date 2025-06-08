@@ -31,9 +31,6 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Tarifa")]
         public virtual Tarifa? Tarifa { get; set; }
 
-        [Display(Name = "Recibo")]
-        public virtual Recibo? Recibo { get; set; }
-
         [NotMapped]
         [Display(Name = "Monto Pagado")]
         public decimal MontoPagado => Tarifa?.Monto ?? 0;

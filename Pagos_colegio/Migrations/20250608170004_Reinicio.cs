@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pagos_colegio_web.Migrations
 {
     /// <inheritdoc />
-    public partial class inicio : Migration
+    public partial class Reinicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,6 +56,7 @@ namespace Pagos_colegio_web.Migrations
                 {
                     TarifaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Gestion = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Monto = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
@@ -177,8 +178,8 @@ namespace Pagos_colegio_web.Migrations
                 {
                     FamiliaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ApellidoMaterno = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ApellidoPaterno = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ApellidoMaterno = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -236,26 +237,6 @@ namespace Pagos_colegio_web.Migrations
                         column: x => x.TarifaId,
                         principalTable: "Tarifas",
                         principalColumn: "TarifaId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Recibos",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Descripcion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ID_PAGO = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Recibos", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Recibos_Pagos_ID_PAGO",
-                        column: x => x.ID_PAGO,
-                        principalTable: "Pagos",
-                        principalColumn: "PagoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -317,12 +298,6 @@ namespace Pagos_colegio_web.Migrations
                 name: "IX_Pagos_TarifaId",
                 table: "Pagos",
                 column: "TarifaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Recibos_ID_PAGO",
-                table: "Recibos",
-                column: "ID_PAGO",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -344,13 +319,10 @@ namespace Pagos_colegio_web.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Recibos");
+                name: "Pagos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "Pagos");
 
             migrationBuilder.DropTable(
                 name: "Estudiantes");

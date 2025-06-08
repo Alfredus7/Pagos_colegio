@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Gestion)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.FechaInicio)
             </th>
             <th>
@@ -28,9 +31,12 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
+                @Html.DisplayFor(modelItem => item.Gestion)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.FechaInicio)
+            </td>
+                <td>
                     @if (item.FechaFin.Year == 0001)
                     {
                         @Html.DisplayName("Tarifa actual")
@@ -39,7 +45,7 @@
                     {
                         @Html.DisplayFor(modelItem => item.FechaFin)
                     }
-            </td>
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Monto)
             </td>

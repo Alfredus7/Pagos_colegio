@@ -28,6 +28,6 @@ namespace Pagos_colegio_web.ViewModels
 
         // Propiedad adicional para mostrar en listados
         [Display(Name = "Nombre de Usuario")]
-        public string NombreUsuario { get; set; }
+        public string? NombreUsuario { get; set; }
     }
 }
