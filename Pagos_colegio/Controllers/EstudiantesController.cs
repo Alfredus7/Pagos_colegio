@@ -122,6 +122,81 @@ namespace Pagos_colegio_web.Controllers
 
             return View(estudiante);
         }
+        public async Task<IActionResult> Reportes()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var familia = await _context.Familias
+                .Include(f => f.Estudiantes)
+                    .ThenInclude(e => e.Pagos)
+                        .ThenInclude(p => p.Tarifa)
+                .FirstOrDefaultAsync(f => f.UsuarioId == userId);
+
+            if (familia == null)
+            {
+                return NotFound("No se encontró una familia asociada al usuario actual.");
+            }
+
+            var estudiantes = familia.Estudiantes;
+
+            // 1. Historial de pagos
+            var historialPagos = estudiantes
+                .SelectMany(e => e.Pagos.Select(p => new HistorialPagoItem
+                {
+                    Estudiante = e.NombreCompleto,
+                    Fecha = p.FechaPago,
+                    Periodo = p.Tarifa?.Periodo,
+                    Monto = p.Tarifa?.Monto ?? 0
+                }))
+                .OrderBy(p => p.Fecha)
+                .ToList();
+
+            // 2. Deuda acumulada (tarifas no pagadas)
+            var tarifas = await _context.Tarifas
+                .Where(t => t.FechaFin < DateTime.Now)
+                .ToListAsync();
+
+            var deuda = new List<(Estudiante estudiante, Tarifa tarifa)>();
+
+            foreach (var estudiante in estudiantes)
+            {
+                foreach (var tarifa in tarifas)
+                {
+                    bool pagado = estudiante.Pagos.Any(p => p.TarifaId == tarifa.TarifaId);
+                    if (!pagado)
+                    {
+                        deuda.Add((estudiante, tarifa));
+                    }
+                }
+            }
+
+            // 3. Pagos del mes actual
+            var mesActual = DateTime.Now.Month;
+            var añoActual = DateTime.Now.Year;
+
+            var pagosMes = estudiantes
+                .SelectMany(e => e.Pagos
+                    .Where(p => p.FechaPago.Month == mesActual && p.FechaPago.Year == añoActual)
+                    .Select(p => new HistorialPagoItem
+                    {
+                        Estudiante = e.NombreCompleto,
+                        Fecha = p.FechaPago,
+                        Periodo = p.Tarifa?.Periodo,
+                        Monto = p.Tarifa?.Monto ?? 0
+                    }))
+                .OrderBy(p => p.Fecha)
+                .ToList();
+
+            var modelo = new ReporteViewModel
+            {
+                Historial = historialPagos,
+                Deuda = deuda,
+                PagosDelMes = pagosMes
+            };
+
+            return View(modelo);
+        }
+
 
         // GET: Estudiantes/Create
         public IActionResult Create()
