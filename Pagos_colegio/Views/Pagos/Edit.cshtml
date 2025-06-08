@@ -24,9 +24,14 @@
                 <span asp-validation-for="EstudianteId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TarifaId" class="control-label"></label>
-                <select asp-for="TarifaId" class="form-control" asp-items="ViewBag.TarifaId"></select>
-                <span asp-validation-for="TarifaId" class="text-danger"></span>
+                <label asp-for="Descuento" class="control-label"></label>
+                <input asp-for="Descuento" class="form-control" />
+                <span asp-validation-for="Descuento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TotalPago" class="control-label"></label>
+                <input asp-for="TotalPago" class="form-control" />
+                <span asp-validation-for="TotalPago" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

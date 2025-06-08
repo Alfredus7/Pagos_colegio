@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
+using Rotativa.AspNetCore;
 
 namespace Pagos_colegio_web.Controllers
 {
@@ -25,10 +26,12 @@ namespace Pagos_colegio_web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Estudiantes.Include(e => e.Familia);
+            var applicationDbContext = _context.Estudiantes.Include(e => e.Familia).Include(e => e.Tarifa);
             var familias = _context.Familias.Include(f => f.Usuario).ToList();
+            var tarifas = _context.Tarifas.ToList();
 
             ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario");
+            ViewBag.TarifaId = new SelectList(tarifas, "TarifaId", "Gestion");
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -43,12 +46,31 @@ namespace Pagos_colegio_web.Controllers
 
             var familia = await _context.Familias
                 .Include(f => f.Estudiantes)
+                    .ThenInclude(e => e.Tarifa)
                 .FirstOrDefaultAsync(f => f.UsuarioId == usuario.Id);
 
             if (familia == null)
                 return NotFound("No se encontró una familia asociada al usuario actual.");
 
             return View("Index", familia.Estudiantes);
+        }
+        [Authorize(Roles = "Familia,Admin")]
+        public async Task<IActionResult> GenerarReciboPdf(int id)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Estudiante)
+                    .ThenInclude(e => e.Familia)
+                .FirstOrDefaultAsync(p => p.PagoId == id);
+
+            if (pago == null)
+                return NotFound();
+
+            return new ViewAsPdf("Recibo", pago)
+            {
+                FileName = $"Recibo_{pago.PagoId}.pdf",
+                PageSize = Rotativa.AspNetCore.Options.Size.A5,
+                PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait
+            };
         }
 
         // ================================
@@ -77,7 +99,8 @@ namespace Pagos_colegio_web.Controllers
             {
                 foreach (var tarifa in tarifasVigentes)
                 {
-                    bool yaPagado = estudiante.Pagos.Any(p => p.TarifaId == tarifa.TarifaId);
+                    bool yaPagado = estudiante.Pagos.Any(p => p.FechaPago >= tarifa.FechaInicio && p.FechaPago <= tarifa.FechaFin);
+
                     if (!yaPagado)
                     {
                         pagosPendientes.Add((estudiante, tarifa));
@@ -87,6 +110,7 @@ namespace Pagos_colegio_web.Controllers
 
             return View(pagosPendientes);
         }
+
 
         // ================================
         // Reportes: historial y deuda
@@ -99,7 +123,6 @@ namespace Pagos_colegio_web.Controllers
             var familia = await _context.Familias
                 .Include(f => f.Estudiantes)
                     .ThenInclude(e => e.Pagos)
-                        .ThenInclude(p => p.Tarifa)
                 .FirstOrDefaultAsync(f => f.UsuarioId == userId);
 
             if (familia == null)
@@ -107,17 +130,17 @@ namespace Pagos_colegio_web.Controllers
 
             var estudiantes = familia.Estudiantes;
 
+            // Historial de pagos (simple)
             var historialPagos = estudiantes
                 .SelectMany(e => e.Pagos.Select(p => new HistorialPagoItem
                 {
                     Estudiante = e.NombreCompleto,
                     Fecha = p.FechaPago,
-                    Periodo = p.Tarifa?.Periodo,
-                    Monto = p.Tarifa?.Monto ?? 0
                 }))
                 .OrderBy(p => p.Fecha)
                 .ToList();
 
+            // Tarifas pasadas (por ejemplo para deuda)
             var tarifas = await _context.Tarifas
                 .Where(t => t.FechaFin < DateTime.Now)
                 .ToListAsync();
@@ -128,7 +151,9 @@ namespace Pagos_colegio_web.Controllers
             {
                 foreach (var tarifa in tarifas)
                 {
-                    bool pagado = estudiante.Pagos.Any(p => p.TarifaId == tarifa.TarifaId);
+                    bool pagado = estudiante.Pagos.Any(p =>
+                        p.FechaPago >= tarifa.FechaInicio && p.FechaPago <= tarifa.FechaFin);
+
                     if (!pagado)
                     {
                         deuda.Add((estudiante, tarifa));
@@ -139,6 +164,7 @@ namespace Pagos_colegio_web.Controllers
             var mesActual = DateTime.Now.Month;
             var añoActual = DateTime.Now.Year;
 
+            // Pagos del mes actual
             var pagosMes = estudiantes
                 .SelectMany(e => e.Pagos
                     .Where(p => p.FechaPago.Month == mesActual && p.FechaPago.Year == añoActual)
@@ -146,8 +172,6 @@ namespace Pagos_colegio_web.Controllers
                     {
                         Estudiante = e.NombreCompleto,
                         Fecha = p.FechaPago,
-                        Periodo = p.Tarifa?.Periodo,
-                        Monto = p.Tarifa?.Monto ?? 0
                     }))
                 .OrderBy(p => p.Fecha)
                 .ToList();
@@ -162,23 +186,27 @@ namespace Pagos_colegio_web.Controllers
             return View(modelo);
         }
 
-        // ================================
-        // Historial de pagos por alumno
-        // ================================
-        [Authorize(Roles = "Familia")]
+
+   
         public async Task<IActionResult> HistorialPagos(int? id)
         {
             if (id == null) return NotFound();
 
             var estudiante = await _context.Estudiantes
                 .Include(e => e.Familia)
-                .Include(e => e.Pagos).ThenInclude(p => p.Tarifa)
+                .Include(e => e.Pagos)
+                .Include(e => e.Tarifa)
                 .FirstOrDefaultAsync(e => e.EstudianteId == id);
 
             if (estudiante == null) return NotFound();
 
+            // Ordenar pagos por fecha
+            estudiante.Pagos = estudiante.Pagos.OrderByDescending(p => p.FechaPago).ToList();
+
             return View(estudiante);
         }
+
+
 
         // ================================
         // CRUD (solo Admin)
@@ -188,14 +216,17 @@ namespace Pagos_colegio_web.Controllers
         public IActionResult Create()
         {
             var familias = _context.Familias.Include(f => f.Usuario).ToList();
+            var tarifas = _context.Tarifas.ToList();
             ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario");
+            ViewBag.TarifaId = new SelectList(tarifas, "TarifaId", "Gestion");
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("EstudianteId,Nombre,FamiliaId")] Estudiante estudiante)
+        public async Task<IActionResult> Create([Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId")] Estudiante estudiante)
         {
             if (ModelState.IsValid)
             {
@@ -204,9 +235,13 @@ namespace Pagos_colegio_web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["FamiliaId"] = new SelectList(_context.Familias, "FamiliaId", "UsuarioId", estudiante.FamiliaId);
+            var familias = await _context.Familias.Include(f => f.Usuario).ToListAsync();
+            var tarifas = await _context.Tarifas.ToListAsync();
+            ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario", estudiante.FamiliaId);
+            ViewBag.TarifaId = new SelectList(tarifas, "TarifaId", "Gestion", estudiante.TarifaId);
             return View(estudiante);
         }
+
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
@@ -216,14 +251,19 @@ namespace Pagos_colegio_web.Controllers
             var estudiante = await _context.Estudiantes.FindAsync(id);
             if (estudiante == null) return NotFound();
 
-            ViewData["FamiliaId"] = new SelectList(_context.Familias, "FamiliaId", "UsuarioId", estudiante.FamiliaId);
+            var familias = await _context.Familias.Include(f => f.Usuario).ToListAsync();
+            var tarifas = await _context.Tarifas.ToListAsync();
+            ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario", estudiante.FamiliaId);
+            ViewBag.TarifaId = new SelectList(tarifas, "TarifaId", "Gestion", estudiante.TarifaId);
+
             return View(estudiante);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId")] Estudiante estudiante)
+        public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId")] Estudiante estudiante)
         {
             if (id != estudiante.EstudianteId) return NotFound();
 
@@ -242,9 +282,15 @@ namespace Pagos_colegio_web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["FamiliaId"] = new SelectList(_context.Familias, "FamiliaId", "UsuarioId", estudiante.FamiliaId);
+            var familias = await _context.Familias.Include(f => f.Usuario).ToListAsync();
+            var tarifas = await _context.Tarifas.ToListAsync();
+            ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario", estudiante.FamiliaId);
+            ViewBag.TarifaId = new SelectList(tarifas, "TarifaId", "Gestion", estudiante.TarifaId);
+
             return View(estudiante);
         }
+
+
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
@@ -253,6 +299,7 @@ namespace Pagos_colegio_web.Controllers
 
             var estudiante = await _context.Estudiantes
                 .Include(e => e.Familia)
+                .Include(e => e.Tarifa)
                 .FirstOrDefaultAsync(m => m.EstudianteId == id);
 
             if (estudiante == null) return NotFound();
@@ -281,3 +328,5 @@ namespace Pagos_colegio_web.Controllers
         }
     }
 }
+
+

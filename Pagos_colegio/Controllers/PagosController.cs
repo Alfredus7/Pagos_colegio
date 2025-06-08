@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,26 +22,24 @@ namespace Pagos_colegio_web.Controllers
         // GET: Pagos
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Pagos.Include(p => p.Estudiante).Include(p => p.Tarifa);
-            return View(await applicationDbContext.ToListAsync());
+            // Cargamos Pago con Estudiante, pero no con Tarifa porque Pago no tiene relación directa
+            var pagos = await _context.Pagos
+                .Include(p => p.Estudiante)
+                .ToListAsync();
+            return View(pagos);
         }
 
         // GET: Pagos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
+            // Incluimos Estudiante para poder obtener la tarifa luego
             var pago = await _context.Pagos
                 .Include(p => p.Estudiante)
-                .Include(p => p.Tarifa)
                 .FirstOrDefaultAsync(m => m.PagoId == id);
-            if (pago == null)
-            {
-                return NotFound();
-            }
+
+            if (pago == null) return NotFound();
 
             return View(pago);
         }
@@ -53,83 +47,84 @@ namespace Pagos_colegio_web.Controllers
         // GET: Pagos/Create
         public IActionResult Create()
         {
-            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "Nombre");
-            ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Gestion");
+            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto");
             return View();
         }
 
         // POST: Pagos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PagoId,FechaPago,EstudianteId,TarifaId")] Pago pago)
+        public async Task<IActionResult> Create([Bind("PagoId,FechaPago,EstudianteId,Descuento")] Pago pago)
         {
+            var estudiante = await _context.Estudiantes.FindAsync(pago.EstudianteId);
+            if (estudiante == null)
+            {
+                ModelState.AddModelError("EstudianteId", "Estudiante no encontrado");
+            }
+            else
+            {
+                var tarifa = await _context.Tarifas.FindAsync(estudiante.TarifaId);
+                if (tarifa == null)
+                {
+                    ModelState.AddModelError("", "Tarifa no encontrada para el estudiante");
+                }
+                else
+                {
+                    // Calcular TotalPago antes de validar el modelo
+                    pago.TotalPago = Math.Round(tarifa.Monto * (1 - (pago.Descuento / 100)), 2);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(pago);
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "Nombre", pago.EstudianteId);
-            ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Monto", pago.TarifaId);
+            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
             return View(pago);
         }
-        public async Task<IActionResult> ReciboPdf(int id)
-        {
-            var pago = await _context.Pagos
-                .Include(p => p.Estudiante)
-                .Include(p => p.Tarifa)
-                .FirstOrDefaultAsync(p => p.PagoId == id);
-
-            if (pago == null)
-            {
-                return NotFound();
-            }
-
-            return new ViewAsPdf("Recibo", pago)
-            {
-                FileName = $"Recibo_Pago_{pago.PagoId}.pdf",
-                PageSize = Rotativa.AspNetCore.Options.Size.A4,
-                PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait
-            };
-        }
-
 
         // GET: Pagos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var pago = await _context.Pagos.FindAsync(id);
-            if (pago == null)
-            {
-                return NotFound();
-            }
-            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "Nombre", pago.EstudianteId);
-            ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Monto", pago.TarifaId);
+            if (pago == null) return NotFound();
+
+            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
             return View(pago);
         }
 
         // POST: Pagos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PagoId,FechaPago,EstudianteId,TarifaId")] Pago pago)
+        public async Task<IActionResult> Edit(int id, [Bind("PagoId,FechaPago,EstudianteId,Descuento")] Pago pago)
         {
-            if (id != pago.PagoId)
-            {
-                return NotFound();
-            }
+            if (id != pago.PagoId) return NotFound();
 
             if (ModelState.IsValid)
             {
+                var estudiante = await _context.Estudiantes.FindAsync(pago.EstudianteId);
+                if (estudiante == null)
+                {
+                    ModelState.AddModelError("EstudianteId", "Estudiante no encontrado");
+                    ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
+                    return View(pago);
+                }
+
+                var tarifa = await _context.Tarifas.FindAsync(estudiante.TarifaId);
+                if (tarifa == null)
+                {
+                    ModelState.AddModelError("", "Tarifa no encontrada para el estudiante");
+                    ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
+                    return View(pago);
+                }
+
+                pago.TotalPago = Math.Round(tarifa.Monto * (1 - (pago.Descuento / 100)), 2);
+
                 try
                 {
                     _context.Update(pago);
@@ -138,37 +133,28 @@ namespace Pagos_colegio_web.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!PagoExists(pago.PagoId))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "Nombre", pago.EstudianteId);
-            ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Monto", pago.TarifaId);
+
+            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
             return View(pago);
         }
 
         // GET: Pagos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var pago = await _context.Pagos
                 .Include(p => p.Estudiante)
-                .Include(p => p.Tarifa)
                 .FirstOrDefaultAsync(m => m.PagoId == id);
-            if (pago == null)
-            {
-                return NotFound();
-            }
+
+            if (pago == null) return NotFound();
 
             return View(pago);
         }
@@ -182,9 +168,8 @@ namespace Pagos_colegio_web.Controllers
             if (pago != null)
             {
                 _context.Pagos.Remove(pago);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -193,14 +178,13 @@ namespace Pagos_colegio_web.Controllers
             return _context.Pagos.Any(e => e.PagoId == id);
         }
 
+        // Pagos para la familia del usuario logueado
         public async Task<IActionResult> IndexFamilia()
         {
-            // Obtener el usuario actual
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            // Buscar la familia asociada al usuario actual (UsuarioId == user.Id)
             var familia = await _context.Familias
                 .Include(f => f.Estudiantes)
                 .FirstOrDefaultAsync(f => f.UsuarioId == user.Id);
@@ -208,20 +192,14 @@ namespace Pagos_colegio_web.Controllers
             if (familia == null)
                 return NotFound("No se encontró una familia asociada a este usuario.");
 
-            // Obtener los IDs de los estudiantes de esa familia
             var estudianteIds = familia.Estudiantes.Select(e => e.EstudianteId).ToList();
 
-            // Filtrar pagos de los estudiantes de esa familia
             var pagos = await _context.Pagos
                 .Include(p => p.Estudiante)
-                    .ThenInclude(e => e.Familia) // Por si necesitas mostrar nombre completo
-                .Include(p => p.Tarifa)
                 .Where(p => estudianteIds.Contains(p.EstudianteId))
                 .ToListAsync();
 
-            return View(pagos); // Asegúrate de tener la vista correspondiente
+            return View(pagos);
         }
-       
-
     }
 }

@@ -4,35 +4,53 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Pagos</h1>
+<h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Registrar nuevo pago</a>
+    <a asp-action="Create">Create New</a>
 </p>
-
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.FechaPago)</th>
-            <th>@Html.DisplayNameFor(model => model.Estudiante)</th>
-            <th>@Html.DisplayNameFor(model => model.Tarifa)</th>
-            <th>Acciones</th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaPago)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estudiante)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descuento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPago)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.FechaPago)</td>
-                <td>@Html.DisplayFor(modelItem => item.Estudiante.Nombre)</td>
-                <td>@Html.DisplayFor(modelItem => item.Tarifa.Monto)</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.PagoId">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.PagoId">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@item.PagoId">Eliminar</a> |
-                    <a asp-action="ReciboPdf" asp-route-id="@item.PagoId" target="_blank">Recibo PDF</a>
-                </td>
-            </tr>
-        }
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaPago)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Estudiante.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descuento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPago)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PagoId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PagoId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PagoId">Delete</a>
+                    <a asp-controller="Estudiantes" asp-action="GenerarReciboPdf" asp-route-id="@item.PagoId" class="btn btn-sm btn-success" target="_blank">
+                        Generar Recibo PDF
+                    </a>
+            </td>
+        </tr>
+}
     </tbody>
 </table>

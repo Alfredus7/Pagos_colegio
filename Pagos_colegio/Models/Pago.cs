@@ -23,16 +23,14 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Estudiante")]
         public virtual Estudiante? Estudiante { get; set; }
 
-        [Required(ErrorMessage = "Debe seleccionar una tarifa")]
-        [Display(Name = "Tarifa")]
-        public int TarifaId { get; set; }
+        [Column(TypeName = "decimal(10, 2)")]
+        [Display(Name = "Descuento Aplicado")]
+        [Range(0, double.MaxValue, ErrorMessage = "El descuento no puede ser negativo")]
+        public decimal Descuento { get; set; } = 0;
 
-        [ForeignKey("TarifaId")]
-        [Display(Name = "Tarifa")]
-        public virtual Tarifa? Tarifa { get; set; }
+        [Column(TypeName = "decimal(10, 2)")]
+        [Display(Name = "Total Pagado")]
+        public decimal TotalPago { get; set; }
 
-        [NotMapped]
-        [Display(Name = "Monto Pagado")]
-        public decimal MontoPagado => Tarifa?.Monto ?? 0;
     }
 }

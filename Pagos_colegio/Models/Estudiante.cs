@@ -28,5 +28,18 @@ namespace Pagos_colegio_web.Models
         [NotMapped]
         [Display(Name = "Nombre Completo")]
         public string NombreCompleto => $"{Nombre} {Familia?.ApellidoPaterno} {Familia?.ApellidoMaterno}";
+
+        [Required(ErrorMessage = "La fecha de inscripción es obligatoria")]
+        [DataType(DataType.Date)]
+        [Display(Name = "Fecha de Inscripción")]
+        public DateTime FechaInscripcion { get; set; } = DateTime.Now;
+
+        [Required(ErrorMessage = "Debe asignarse una tarifa")]
+        [Display(Name = "Tarifa Asignada")]
+        public int TarifaId { get; set; }
+
+        [ForeignKey("TarifaId")]
+        [Display(Name = "Tarifa Asignada")]
+        public virtual Tarifa? Tarifa { get; set; }
     }
 }
