@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,34 +13,29 @@ namespace Pagos_colegio_web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public EstudiantesController(
-            ApplicationDbContext context,
-            UserManager<IdentityUser> userManager)
+        public EstudiantesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        // ============================================
-        // 1. Listado General
-        // ============================================
-
-        // Vista principal para administradores
+        // ===========================
+        // 1. Listado general (Admin)
+        // ===========================
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Estudiantes.Include(e => e.Familia);
             var familias = _context.Familias.Include(f => f.Usuario).ToList();
 
-            ViewBag.FamiliaId = new SelectList(
-                familias,
-                "FamiliaId",
-                "NombreUsuario" // propiedad calculada
-            );
-
+            ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario");
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // Vista para usuarios con rol familia (solo ven sus hijos)
+        // ================================
+        // Vista para usuarios familia
+        // ================================
+        [Authorize(Roles = "Familia")]
         public async Task<IActionResult> VerHijos()
         {
             var usuario = await _userManager.GetUserAsync(User);
@@ -55,11 +51,10 @@ namespace Pagos_colegio_web.Controllers
             return View("Index", familia.Estudiantes);
         }
 
-        // ============================================
-        // 2. Consultas de pagos y deudas
-        // ============================================
-
-        // Consulta de pagos pendientes (HU-003)
+        // ================================
+        // 2. Pagos pendientes
+        // ================================
+        [Authorize(Roles = "Familia")]
         public async Task<IActionResult> PagosPendientes()
         {
             var userId = _userManager.GetUserId(User);
@@ -93,7 +88,10 @@ namespace Pagos_colegio_web.Controllers
             return View(pagosPendientes);
         }
 
-        // Reportes: historial, deuda acumulada y pagos del mes (HU-007)
+        // ================================
+        // Reportes: historial y deuda
+        // ================================
+        [Authorize(Roles = "Familia")]
         public async Task<IActionResult> Reportes()
         {
             var userId = _userManager.GetUserId(User);
@@ -109,7 +107,6 @@ namespace Pagos_colegio_web.Controllers
 
             var estudiantes = familia.Estudiantes;
 
-            // 1. Historial de pagos
             var historialPagos = estudiantes
                 .SelectMany(e => e.Pagos.Select(p => new HistorialPagoItem
                 {
@@ -121,7 +118,6 @@ namespace Pagos_colegio_web.Controllers
                 .OrderBy(p => p.Fecha)
                 .ToList();
 
-            // 2. Deuda acumulada
             var tarifas = await _context.Tarifas
                 .Where(t => t.FechaFin < DateTime.Now)
                 .ToListAsync();
@@ -140,7 +136,6 @@ namespace Pagos_colegio_web.Controllers
                 }
             }
 
-            // 3. Pagos del mes actual
             var mesActual = DateTime.Now.Month;
             var añoActual = DateTime.Now.Year;
 
@@ -167,7 +162,10 @@ namespace Pagos_colegio_web.Controllers
             return View(modelo);
         }
 
-        // Historial de pagos por estudiante
+        // ================================
+        // Historial de pagos por alumno
+        // ================================
+        [Authorize(Roles = "Familia")]
         public async Task<IActionResult> HistorialPagos(int? id)
         {
             if (id == null) return NotFound();
@@ -182,41 +180,21 @@ namespace Pagos_colegio_web.Controllers
             return View(estudiante);
         }
 
-        // ============================================
-        // 3. CRUD: Crear, Editar, Detalles y Eliminar
-        // ============================================
+        // ================================
+        // CRUD (solo Admin)
+        // ================================
 
-        // GET: Estudiantes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var estudiante = await _context.Estudiantes
-                .Include(e => e.Familia)
-                .FirstOrDefaultAsync(m => m.EstudianteId == id);
-
-            if (estudiante == null) return NotFound();
-
-            return View(estudiante);
-        }
-
-        // GET: Estudiantes/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var familias = _context.Familias.Include(f => f.Usuario).ToList();
-
-            ViewBag.FamiliaId = new SelectList(
-                familias,
-                "FamiliaId",
-                "NombreUsuario"
-            );
-
+            ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario");
             return View();
         }
 
-        // POST: Estudiantes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("EstudianteId,Nombre,FamiliaId")] Estudiante estudiante)
         {
             if (ModelState.IsValid)
@@ -230,7 +208,7 @@ namespace Pagos_colegio_web.Controllers
             return View(estudiante);
         }
 
-        // GET: Estudiantes/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -242,9 +220,9 @@ namespace Pagos_colegio_web.Controllers
             return View(estudiante);
         }
 
-        // POST: Estudiantes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId")] Estudiante estudiante)
         {
             if (id != estudiante.EstudianteId) return NotFound();
@@ -258,10 +236,8 @@ namespace Pagos_colegio_web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EstudianteExists(estudiante.EstudianteId))
-                        return NotFound();
-                    else
-                        throw;
+                    if (!EstudianteExists(estudiante.EstudianteId)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -270,7 +246,7 @@ namespace Pagos_colegio_web.Controllers
             return View(estudiante);
         }
 
-        // GET: Estudiantes/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -284,9 +260,9 @@ namespace Pagos_colegio_web.Controllers
             return View(estudiante);
         }
 
-        // POST: Estudiantes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var estudiante = await _context.Estudiantes.FindAsync(id);
@@ -299,7 +275,6 @@ namespace Pagos_colegio_web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Utilidad: Verifica si existe el estudiante
         private bool EstudianteExists(int id)
         {
             return _context.Estudiantes.Any(e => e.EstudianteId == id);
