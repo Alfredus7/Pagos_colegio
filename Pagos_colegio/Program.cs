@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,9 @@ app.UseRouting();
 
 app.UseAuthentication(); // Necesario para login
 app.UseAuthorization();
+
+string wwroot =  app.Environment.WebRootPath;
+Rotativa.AspNetCore.RotativaConfiguration.Setup(wwroot , "Rotativa");
 
 app.MapControllerRoute(
     name: "default",

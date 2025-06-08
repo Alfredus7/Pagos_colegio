@@ -1,0 +1,13 @@
+﻿@model Pagos_colegio_web.Models.Pago
+
+@{
+    Layout = null; // Para que el PDF no herede layout
+}
+
+<h2 style="text-align:center">Recibo de Pago</h2>
+
+<p><strong>Estudiante:</strong> @Model.Estudiante.NombreCompleto</p>
+<p><strong>Tarifa:</strong> @Model.Tarifa.Periodo</p>
+<p><strong>Monto:</strong> @Model.Tarifa.Monto.ToString("C")</p>
+<p><strong>Fecha de Pago:</strong> @Model.FechaPago.ToShortDateString()</p>
+<p><strong>Recibo ID:</strong> @Model.PagoId</p>

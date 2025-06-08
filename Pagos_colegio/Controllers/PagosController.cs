@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
+using Rotativa.AspNetCore;
 
 namespace Pagos_colegio_web.Controllers
 {
@@ -68,12 +69,34 @@ namespace Pagos_colegio_web.Controllers
             {
                 _context.Add(pago);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "Nombre", pago.EstudianteId);
             ViewData["TarifaId"] = new SelectList(_context.Tarifas, "TarifaId", "Monto", pago.TarifaId);
             return View(pago);
         }
+        public async Task<IActionResult> ReciboPdf(int id)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Estudiante)
+                .Include(p => p.Tarifa)
+                .FirstOrDefaultAsync(p => p.PagoId == id);
+
+            if (pago == null)
+            {
+                return NotFound();
+            }
+
+            return new ViewAsPdf("Recibo", pago)
+            {
+                FileName = $"Recibo_Pago_{pago.PagoId}.pdf",
+                PageSize = Rotativa.AspNetCore.Options.Size.A4,
+                PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait
+            };
+        }
+
 
         // GET: Pagos/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -199,6 +222,7 @@ namespace Pagos_colegio_web.Controllers
 
             return View(pagos); // Asegúrate de tener la vista correspondiente
         }
+       
 
     }
 }
