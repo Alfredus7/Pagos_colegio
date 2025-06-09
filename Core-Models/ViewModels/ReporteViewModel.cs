@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Pagos_colegio.Models;
 
-namespace Pagos_colegio.ViewModels
+namespace Pagos_colegio.ViewModel
 {
     public class ReporteViewModel
     {

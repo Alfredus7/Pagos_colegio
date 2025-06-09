@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio.Data;
 using Pagos_colegio.Models;
-using Pagos_colegio.ViewModels;
+using Pagos_colegio.ViewModel;
 using Rotativa.AspNetCore;
 
 namespace Pagos_colegio.Controllers
 {
-    [Authorize(Roles = "Familia,Admin")]
+   
     public class ReportesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,6 +25,7 @@ namespace Pagos_colegio.Controllers
         /// Genera un recibo de pago en formato PDF.
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "Familia,Admin")]
         public async Task<IActionResult> GenerarReciboPdf(int id)
         {
             var pago = await _context.Pagos
@@ -56,6 +57,7 @@ namespace Pagos_colegio.Controllers
 
         [HttpGet]
         [Authorize]
+        [Authorize(Roles = "Familia,Admin")]
         public async Task<IActionResult> PagosPendientes(int? estudianteId = null)
         {
             var pagosPendientes = new List<(Estudiante estudiante, string periodo, decimal monto)>();
@@ -133,7 +135,7 @@ namespace Pagos_colegio.Controllers
         /// Muestra el historial de pagos para un estudiante específico.
         /// </summary>
         [HttpGet]
-        [Authorize(Roles = "Familia")]
+        [Authorize(Roles = "Familia,Admin")]
         public async Task<IActionResult> HistorialPagos(int? id)
         {
             if (id == null) return NotFound();

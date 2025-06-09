@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio.Data;
 using Pagos_colegio.Models;
-using Pagos_colegio.ViewModels;
-using Rotativa.AspNetCore;
+using Pagos_colegio.ViewModel;
 
 namespace Pagos_colegio.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Pagos_colegio.ViewModels
+namespace Pagos_colegio.ViewModel
 {
     public class FamiliaUsuarioViewModel
     {
