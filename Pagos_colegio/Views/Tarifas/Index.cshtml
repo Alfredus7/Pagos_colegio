@@ -37,14 +37,19 @@
                 @Html.DisplayFor(modelItem => item.FechaInicio)
             </td>
                 <td>
-                    @if (item.FechaFin.Year == 0001)
+                    @{
+                        var hoy = DateTime.Today;
+                    }
+
+                    @if (item.FechaInicio <= hoy && item.FechaFin >= hoy)
                     {
-                        @Html.DisplayName("Tarifa actual")
+                        <span class="badge bg-success">Tarifa actual</span>
                     }
                     else
                     {
                         @Html.DisplayFor(modelItem => item.FechaFin)
                     }
+
                 </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Monto)

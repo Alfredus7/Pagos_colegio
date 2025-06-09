@@ -46,51 +46,42 @@ namespace Pagos_colegio_web.Controllers
         // GET: Tarifas/Create
         public IActionResult Create()
         {
-            // Calcular cuántas gestiones hay del mismo año
-            int anioActual = DateTime.Now.Year;
-            int conteo = _context.Tarifas
-                .Count(t => t.FechaInicio.Year == anioActual);
+          
 
-            var tarifa = new Tarifa
-            {
-                FechaInicio = DateTime.Now,
-                FechaFin = DateTime.Now.AddMonths(1),
-                Gestion = $"Gestión {conteo + 1} - {anioActual}"
-            };
-
-            return View(tarifa);
+            return View();
         }
 
 
-        // POST: Tarifas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TarifaId,FechaInicio,FechaFin,Monto")] Tarifa tarifa)
+        public async Task<IActionResult> Create([Bind("FechaInicio,FechaFin,Monto")] Tarifa tarifa)
         {
-            // Aseguramos que FechaInicio sea el primer día del mes
-            tarifa.FechaInicio = new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1);
+            // Normalizamos: FechaInicio al inicio del día, FechaFin al final
+            tarifa.FechaInicio = tarifa.FechaInicio.Date;
+            tarifa.FechaFin = tarifa.FechaFin.Date;
 
-            // Definimos una "fecha nula" para las tarifas vigentes
-            DateTime fechaNula = new DateTime(1, 1, 1);
-            tarifa.FechaFin = fechaNula;
-
-            // Buscar la tarifa vigente (FechaFin = fechaNula) para actualizar su FechaFin
-            var tarifaAnterior = await _context.Tarifas.FirstOrDefaultAsync(t => t.FechaFin == fechaNula);
-
-            if (tarifaAnterior != null)
+            // Validación de fechas
+            if (tarifa.FechaFin <= tarifa.FechaInicio)
             {
-                // FechaFin de la tarifa anterior será el último día del mes anterior a la nueva tarifa
-                tarifaAnterior.FechaFin = tarifa.FechaInicio.AddDays(-1);
-                _context.Update(tarifaAnterior);
+                ModelState.AddModelError(string.Empty, "La fecha de fin debe ser posterior a la fecha de inicio.");
+                return View(tarifa);
             }
 
-            // Calcular la gestión automáticamente con el año de la nueva tarifa
-            int anio = tarifa.FechaInicio.Year;
-            int cantidadGestiones = await _context.Tarifas.CountAsync(t => t.FechaInicio.Year == anio);
+            // Validar solapamientos: inicio o fin dentro de alguna gestión existente
+            bool solapa = await _context.Tarifas.AnyAsync(t =>
+                (tarifa.FechaInicio <= t.FechaFin && tarifa.FechaFin >= t.FechaInicio));
 
-            tarifa.Gestion = $"Gestión {cantidadGestiones + 1} {anio}";
+            if (solapa)
+            {
+                ModelState.AddModelError(string.Empty, "Ya existe una tarifa entre ese rango de fechas ingresado.");
+                return View(tarifa);
+            }
+
+            // Asignar nombre automático a la gestión
+            string nombreMesInicio = tarifa.FechaInicio.ToString("MMM");
+            string nombreMesFin = tarifa.FechaFin.ToString("MMM");
+            int anio = tarifa.FechaInicio.Year;
+            tarifa.Gestion = $"Gestión {anio} ({nombreMesInicio} - {nombreMesFin})";
 
             if (!ModelState.IsValid)
                 return View(tarifa);
@@ -100,6 +91,7 @@ namespace Pagos_colegio_web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
 
 
