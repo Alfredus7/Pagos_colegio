@@ -67,38 +67,42 @@ namespace Pagos_colegio_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TarifaId,FechaInicio,FechaFin,Monto,Gestion")] Tarifa tarifa)
+        public async Task<IActionResult> Create([Bind("TarifaId,FechaInicio,FechaFin,Monto")] Tarifa tarifa)
         {
-            tarifa.FechaFin = new DateTime(1, 1, 1);
+            // Aseguramos que FechaInicio sea el primer día del mes
+            tarifa.FechaInicio = new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1);
 
-            DateTime fechaNull = new DateTime(1, 1, 1);
+            // Definimos una "fecha nula" para las tarifas vigentes
+            DateTime fechaNula = new DateTime(1, 1, 1);
+            tarifa.FechaFin = fechaNula;
 
-            var tarifAnterior = await _context.Tarifas.FirstOrDefaultAsync(i => i.FechaFin.Year == fechaNull.Year);
+            // Buscar la tarifa vigente (FechaFin = fechaNula) para actualizar su FechaFin
+            var tarifaAnterior = await _context.Tarifas.FirstOrDefaultAsync(t => t.FechaFin == fechaNula);
 
-            if (tarifAnterior != null)
+            if (tarifaAnterior != null)
             {
-                tarifAnterior.FechaFin = tarifa.FechaInicio.AddDays(-1);
-                _context.Update(tarifAnterior);
+                // FechaFin de la tarifa anterior será el último día del mes anterior a la nueva tarifa
+                tarifaAnterior.FechaFin = tarifa.FechaInicio.AddDays(-1);
+                _context.Update(tarifaAnterior);
             }
 
-            // Obtener año de la nueva tarifa
+            // Calcular la gestión automáticamente con el año de la nueva tarifa
             int anio = tarifa.FechaInicio.Year;
+            int cantidadGestiones = await _context.Tarifas.CountAsync(t => t.FechaInicio.Year == anio);
 
-            // Contar cuántas gestiones existen para ese año
-            int cantidad = await _context.Tarifas.CountAsync(t => t.FechaInicio.Year == anio);
+            tarifa.Gestion = $"Gestión {cantidadGestiones + 1} {anio}";
 
-            // Asignar la gestión automáticamente
-            tarifa.Gestion = $"Gestión {cantidad + 1} {anio}";
+            if (!ModelState.IsValid)
+                return View(tarifa);
 
-            if (ModelState.IsValid)
-            {
-                _context.Add(tarifa);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            _context.Add(tarifa);
+            await _context.SaveChangesAsync();
 
-            return View(tarifa);
+            return RedirectToAction(nameof(Index));
         }
+
+
+
 
 
 

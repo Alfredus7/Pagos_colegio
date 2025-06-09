@@ -17,7 +17,16 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // 🔐 Configuración de Identity (sin confirmación de cuenta y con roles)
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
+    // Configuración de contraseñas más permisiva
     options.SignIn.RequireConfirmedAccount = false;
+
+    // Ajuste de requisitos de contraseña
+    options.Password.RequireDigit = false; // No requiere un número
+    options.Password.RequireLowercase = true; // Requiere al menos una letra minúscula
+    options.Password.RequireUppercase = false; // No requiere una letra mayúscula
+    options.Password.RequireNonAlphanumeric = false; // No requiere un carácter no alfanumérico
+    options.Password.RequiredLength = 6; // Longitud mínima de 6 caracteres
+    options.Password.RequiredUniqueChars = 1; // Requiere al menos un carácter único
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();

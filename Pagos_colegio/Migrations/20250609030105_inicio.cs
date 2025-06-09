@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pagos_colegio_web.Migrations
 {
     /// <inheritdoc />
-    public partial class Reinicio : Migration
+    public partial class inicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -200,7 +200,9 @@ namespace Pagos_colegio_web.Migrations
                     EstudianteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FamiliaId = table.Column<int>(type: "int", nullable: false)
+                    FamiliaId = table.Column<int>(type: "int", nullable: false),
+                    FechaInscripcion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TarifaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,6 +212,12 @@ namespace Pagos_colegio_web.Migrations
                         column: x => x.FamiliaId,
                         principalTable: "Familias",
                         principalColumn: "FamiliaId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Estudiantes_Tarifas_TarifaId",
+                        column: x => x.TarifaId,
+                        principalTable: "Tarifas",
+                        principalColumn: "TarifaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -221,7 +229,9 @@ namespace Pagos_colegio_web.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FechaPago = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EstudianteId = table.Column<int>(type: "int", nullable: false),
-                    TarifaId = table.Column<int>(type: "int", nullable: false)
+                    Descuento = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    TotalPago = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    TarifaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -236,8 +246,7 @@ namespace Pagos_colegio_web.Migrations
                         name: "FK_Pagos_Tarifas_TarifaId",
                         column: x => x.TarifaId,
                         principalTable: "Tarifas",
-                        principalColumn: "TarifaId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TarifaId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -285,6 +294,11 @@ namespace Pagos_colegio_web.Migrations
                 column: "FamiliaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Estudiantes_TarifaId",
+                table: "Estudiantes",
+                column: "TarifaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Familias_UsuarioId",
                 table: "Familias",
                 column: "UsuarioId");
@@ -328,10 +342,10 @@ namespace Pagos_colegio_web.Migrations
                 name: "Estudiantes");
 
             migrationBuilder.DropTable(
-                name: "Tarifas");
+                name: "Familias");
 
             migrationBuilder.DropTable(
-                name: "Familias");
+                name: "Tarifas");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

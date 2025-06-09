@@ -46,8 +46,8 @@
                 <a asp-action="Edit" asp-route-id="@item.PagoId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.PagoId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.PagoId">Delete</a>
-                    <a asp-controller="Reportes" asp-action="GenerarReciboPdf" asp-route-id="@item.PagoId" class="btn btn-sm btn-success" target="_blank">
-                        Generar Recibo PDF
+                    <a asp-controller="Reportes" asp-action="GenerarReciboPdf" asp-route-id="@item.PagoId" target="_blank" class="btn btn-sm btn-success">
+                        PDF
                     </a>
             </td>
         </tr>

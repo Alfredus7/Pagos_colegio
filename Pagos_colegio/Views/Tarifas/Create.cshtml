@@ -14,7 +14,7 @@
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Gestion" class="control-label"></label>
-                <input asp-for="Gestion" class="form-control" readonly />
+                <span class="form-control-plaintext">@Model.Gestion</span>
             </div>
 
             <div class="form-group">
@@ -22,14 +22,10 @@
                 <input asp-for="FechaInicio" class="form-control" />
                 <span asp-validation-for="FechaInicio" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FechaFin" class="control-label"></label>
-                <input asp-for="FechaFin" class="form-control" />
-                <span asp-validation-for="FechaFin" class="text-danger"></span>
-            </div>
+           
             <div class="form-group">
                 <label asp-for="Monto" class="control-label"></label>
-                <input asp-for="Monto" class="form-control" />
+                <input asp-for="Monto" class="form-control" type="number" step="0.01" min="0" placeholder="Ejemplo: 1000.00" />
                 <span asp-validation-for="Monto" class="text-danger"></span>
             </div>
             <div class="form-group">

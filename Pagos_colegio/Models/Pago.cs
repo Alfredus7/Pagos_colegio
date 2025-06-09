@@ -11,7 +11,7 @@ namespace Pagos_colegio_web.Models
         public int PagoId { get; set; }
 
         [Required(ErrorMessage = "La fecha de pago es obligatoria")]
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Display(Name = "Fecha de Pago")]
         public DateTime FechaPago { get; set; } = DateTime.Now;
 

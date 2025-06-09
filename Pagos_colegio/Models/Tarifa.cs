@@ -12,7 +12,7 @@ namespace Pagos_colegio_web.Models
 
         [StringLength(50)]
         [Display(Name = "Gestión")]
-        public string Gestion { get; set; }
+        public string? Gestion { get; set; }
 
         [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
         [DataType(DataType.Date)]

@@ -4,53 +4,44 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Registrar Pago</h1>
+<h1>Create</h1>
 
 <h4>Pago</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="All" class="text-danger"></div>
-
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FechaPago" class="control-label"></label>
                 <input asp-for="FechaPago" class="form-control" />
                 <span asp-validation-for="FechaPago" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="EstudianteId" class="control-label"></label>
-                <select asp-for="EstudianteId" class="form-control" asp-items="ViewBag.EstudianteId"></select>
-                <span asp-validation-for="EstudianteId" class="text-danger"></span>
+                <select asp-for="EstudianteId" class ="form-control" asp-items="ViewBag.EstudianteId"></select>
             </div>
-
             <div class="form-group">
                 <label asp-for="Descuento" class="control-label"></label>
                 <input asp-for="Descuento" class="form-control" />
                 <span asp-validation-for="Descuento" class="text-danger"></span>
             </div>
-
-            <!-- Campo TotalPago solo como display -->
             <div class="form-group">
-                <label class="control-label">Total calculado (al guardar)</label>
-                <input class="form-control" value="Se calculará automáticamente" disabled />
+                <label asp-for="TotalPago" class="control-label"></label>
+                <input asp-for="TotalPago" class="form-control" />
+                <span asp-validation-for="TotalPago" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <input type="submit" value="Registrar" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Volver al listado</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-

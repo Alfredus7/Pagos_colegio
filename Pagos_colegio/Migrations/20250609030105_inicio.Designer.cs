@@ -12,8 +12,8 @@ using Pagos_colegio_web.Data;
 namespace Pagos_colegio_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250608223523_madeinheaven")]
-    partial class madeinheaven
+    [Migration("20250609030105_inicio")]
+    partial class inicio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
