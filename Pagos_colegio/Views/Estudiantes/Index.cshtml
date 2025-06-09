@@ -34,19 +34,19 @@
                 @Html.DisplayFor(modelItem => item.Nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Familia.ApellidoMaterno)
+                @Html.DisplayFor(modelItem => item.Familia.NombreUsuario)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FechaInscripcion)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Tarifa.TarifaId)
+                @Html.DisplayFor(modelItem => item.Tarifa.Gestion)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.EstudianteId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.EstudianteId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.EstudianteId">Delete</a>
-                <a asp-action="HistorialPagos" asp-route-id="@item.EstudianteId">HistorialPagos</a>
+                    <a asp-controller="Reportes" asp-action="HistorialPagos" asp-route-id="@item.EstudianteId">HistorialPagos</a>
             </td>
         </tr>
 }

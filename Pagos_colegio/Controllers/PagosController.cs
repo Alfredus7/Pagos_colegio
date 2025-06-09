@@ -177,29 +177,5 @@ namespace Pagos_colegio_web.Controllers
         {
             return _context.Pagos.Any(e => e.PagoId == id);
         }
-
-        // Pagos para la familia del usuario logueado
-        public async Task<IActionResult> IndexFamilia()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            var familia = await _context.Familias
-                .Include(f => f.Estudiantes)
-                .FirstOrDefaultAsync(f => f.UsuarioId == user.Id);
-
-            if (familia == null)
-                return NotFound("No se encontró una familia asociada a este usuario.");
-
-            var estudianteIds = familia.Estudiantes.Select(e => e.EstudianteId).ToList();
-
-            var pagos = await _context.Pagos
-                .Include(p => p.Estudiante)
-                .Where(p => estudianteIds.Contains(p.EstudianteId))
-                .ToListAsync();
-
-            return View(pagos);
-        }
     }
 }

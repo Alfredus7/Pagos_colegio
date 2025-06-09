@@ -1,0 +1,76 @@
+﻿@model Pagos_colegio_web.Models.ReporteViewModel
+
+<h2>Historial de Pagos</h2>
+@if (Model.Historial.Any())
+{
+    <table class="table">
+        <thead>
+            <tr><th>Estudiante</th><th>Fecha</th><th>Periodo</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Historial)
+            {
+                <tr>
+                    <td>@p.Estudiante</td>
+                    <td>@p.Fecha.ToShortDateString()</td>
+                    <td>@p.Periodo</td>
+                    <td>@p.Monto.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay pagos registrados.</p>
+}
+
+<h2>Pagos del Mes</h2>
+@if (Model.PagosDelMes.Any())
+{
+    <table class="table">
+        <thead>
+            <tr><th>Estudiante</th><th>Fecha</th><th>Periodo</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.PagosDelMes)
+            {
+                <tr>
+                    <td>@p.Estudiante</td>
+                    <td>@p.Fecha.ToShortDateString()</td>
+                    <td>@p.Periodo</td>
+                    <td>@p.Monto.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay pagos registrados este mes.</p>
+}
+
+<h2>Deuda</h2>
+@if (Model.Deuda.Any())
+{
+    <table class="table">
+        <thead>
+            <tr><th>Estudiante</th><th>Periodo</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Deuda)
+            {
+                <tr>
+                    <td>@item.estudiante.NombreCompleto</td>
+                    <td>@item.tarifa.Periodo</td>
+                    <td>@item.tarifa.Monto.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay deudas pendientes.</p>
+}
+
