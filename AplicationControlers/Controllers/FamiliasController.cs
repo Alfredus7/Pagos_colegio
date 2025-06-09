@@ -39,25 +39,6 @@ namespace Pagos_colegio.Controllers
             return View(familias);
         }
 
-        // GET: Familias/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var familia = await _context.Familias
-                .Include(f => f.Usuario)
-                .FirstOrDefaultAsync(m => m.FamiliaId == id);
-            if (familia == null)
-            {
-                return NotFound();
-            }
-
-            return View(familia);
-        }
-
         // GET: Familias/Create
         public IActionResult Create()
         {

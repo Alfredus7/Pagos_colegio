@@ -1,71 +1,71 @@
 ﻿@model IEnumerable<Pagos_colegio.Models.Tarifa>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Listado de Tarifas";
+    bool esAdmin = User.IsInRole("Admin");
+    var hoy = DateTime.Today;
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="display-6">@ViewData["Title"]</h1>
+        @if (esAdmin)
+        {
+            <a class="btn btn-success" asp-action="Create">➕ Nueva Tarifa</a>
+        }
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Gestion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaFin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Monto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MontoTotal)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gestion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
-            </td>
-                <td>
-                    @{
-                        var hoy = DateTime.Today;
-                    }
-
-                    @if (item.FechaInicio <= hoy && item.FechaFin >= hoy)
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            (｡•́︿•̀｡) No hay tarifas registradas aún.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Gestion)</th>
+                        <th>@Html.DisplayNameFor(model => model.FechaInicio)</th>
+                        <th>@Html.DisplayName("Fecha Fin")</th>
+                        <th>@Html.DisplayNameFor(model => model.Monto)</th>
+                        <th>@Html.DisplayNameFor(model => model.MontoTotal)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
                     {
-                        <span class="badge bg-success">Tarifa actual</span>
+                        <tr>
+                            <td>@item.Gestion</td>
+                            <td>@item.FechaInicio.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (item.FechaInicio <= hoy && item.FechaFin >= hoy)
+                                {
+                                    <span class="badge bg-success">Tarifa actual</span>
+                                }
+                                else
+                                {
+                                    @item.FechaFin.ToString("dd/MM/yyyy")
+                                }
+                            </td>
+                            <td>@item.Monto.ToString("C")</td>
+                            <td>@item.MontoTotal.ToString("C")</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    @if (esAdmin)
+                                    {
+                                        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.TarifaId">✏️ Editar</a>
+                                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.TarifaId">🗑️ Eliminar</a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
                     }
-                    else
-                    {
-                        @Html.DisplayFor(modelItem => item.FechaFin)
-                    }
-
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Monto)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MontoTotal)
-                </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TarifaId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TarifaId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TarifaId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

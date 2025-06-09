@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio.Data;
 using Pagos_colegio.Models;
-using Rotativa.AspNetCore;
-using System.Diagnostics;
 
 namespace Pagos_colegio.Controllers
 {
@@ -30,22 +28,6 @@ namespace Pagos_colegio.Controllers
                 .ToListAsync();
             return View(pagos);
         }
-
-        // GET: Pagos/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            // Incluimos Estudiante para poder obtener la tarifa luego
-            var pago = await _context.Pagos
-                .Include(p => p.Estudiante)
-                .FirstOrDefaultAsync(m => m.PagoId == id);
-
-            if (pago == null) return NotFound();
-
-            return View(pago);
-        }
-
         // GET: Pagos/Create
         // GET: Pagos/Create
         [Authorize(Roles = "Admin")]

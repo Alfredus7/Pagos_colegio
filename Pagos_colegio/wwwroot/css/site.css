@@ -1,71 +1,281 @@
+/* ────────────── VARIABLES GLOBALES ────────────── */
+:root {
+    /* Paleta de colores */
+    --primary-bg: #1a1a2e;
+    --secondary-bg: #16213e;
+    --accent-color: #4cc9f0;
+    --text-color: #e6f7ff;
+    --header-bg: #0f3460;
+    --card-bg: #1f2a4a;
+    /* Colores adicionales */
+    --warning-color: #ffd166;
+    --success-color: #006d75;
+    --info-color: #1e3a8a;
+    /* Bordes */
+    --border-color: #2c3e50;
+    --border-radius: 10px;
+    /* Sombras */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 .25rem .75rem rgba(0, 0, 0, .2);
+    /* Transiciones */
+    --transition-fast: all 0.2s ease-in-out;
+    --transition-normal: all 0.3s ease;
+}
+
+/* ────────────── ESTRUCTURA BASE ────────────── */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
-}
-/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
-    white-space: normal;
-    text-align: center;
-    word-break: break-all;
+    margin-bottom: 60px;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-family: 'Nunito', 'Comic Neue', sans-serif;
+    line-height: 1.6;
 }
 
+/* ────────────── TIPOGRAFÍA ────────────── */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+p, span, td, th, li {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+strong {
+    color: var(--accent-color);
+}
+
+mark {
+    background-color: var(--warning-color);
+    padding: 0 0.2em;
+    border-radius: 0.2em;
+    color: #121a2a;
+}
+
+/* ────────────── ENLACES ────────────── */
 a {
-    color: #0077cc;
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: var(--transition-fast);
 }
 
+    a:hover {
+        color: #3a86c4;
+        text-decoration: underline;
+    }
+
+    a.btn, a.card, a.badge {
+        text-decoration: none !important;
+    }
+
+/* ────────────── COMPONENTES PRINCIPALES ────────────── */
+/* Navbar */
+.navbar {
+    background-color: var(--header-bg) !important;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-link, .navbar-brand {
+    color: var(--text-color) !important;
+    transition: var(--transition-normal);
+}
+
+    .nav-link:hover {
+        color: var(--accent-color) !important;
+        transform: translateY(-2px);
+    }
+
+/* Dropdowns */
+.dropdown-menu {
+    background-color: var(--secondary-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+    .dropdown-item:hover {
+        background-color: var(--accent-color);
+        color: #111;
+    }
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border: none;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+}
+
+/* Tablas */
+.table {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+thead {
+    background-color: var(--header-bg);
+    color: white;
+}
+
+tbody tr {
+    background-color: var(--secondary-bg);
+}
+
+    tbody tr:hover {
+        background-color: var(--border-color);
+    }
+
+/* ────────────── BOTONES ────────────── */
 .btn-primary {
+    color: #111;
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+    .btn-primary:hover {
+        background-color: #3aa8d8;
+        border-color: #3aa8d8;
+    }
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+    .btn-success:hover {
+        background-color: #00555e;
+        border-color: #00555e;
+    }
+
+.btn-outline-success {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+    .btn-outline-success:hover {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+/* Focus states */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem var(--primary-bg), 0 0 0 0.25rem #258cfb;
+}
+
+/* ────────────── FORMULARIOS ────────────── */
+.form-control {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+    .form-control:focus {
+        background-color: var(--secondary-bg);
+        color: var(--text-color);
+        border-color: var(--accent-color);
+    }
+
+/* ────────────── ALERTAS Y BADGES ────────────── */
+.alert-info {
+    background-color: var(--info-color);
+    color: var(--text-color);
+    border-color: #1e40af;
+}
+
+.alert-success {
+    background-color: #065f46;
+    color: var(--text-color);
+    border-color: #047857;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning-color);
+    color: #121a2a;
+}
+
+/* ────────────── NAV PILLS ────────────── */
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
+/* ────────────── UTILIDADES ────────────── */
 .border-top {
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid var(--border-color);
 }
 
 .border-bottom {
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .box-shadow {
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: var(--shadow-lg);
 }
 
-button.accept-policy {
-    font-size: 1rem;
-    line-height: inherit;
+.container {
+    padding-top: 20px;
 }
 
+/* Footer */
 .footer {
     position: absolute;
     bottom: 0;
     width: 100%;
     white-space: nowrap;
     line-height: 60px;
+    background-color: var(--header-bg);
+    color: var(--text-color);
+}
+
+/* ────────────── ICONOS ────────────── */
+i.bi {
+    margin-right: 0.25rem;
+    vertical-align: middle;
+    color: var(--accent-color);
 }

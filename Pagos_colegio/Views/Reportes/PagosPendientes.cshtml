@@ -10,6 +10,8 @@
             Pendientes = g.Select(x => new { x.periodo, x.monto }).ToList()
         })
         .ToList();
+
+    bool esAdmin = User.IsInRole("Admin");
 }
 
 <div class="container py-4">
@@ -17,56 +19,63 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-success">No hay pagos pendientes. ¡Todo está al día!</div>
+        <div class="alert alert-success" role="alert">
+            ¡No hay pagos pendientes! Todo está al día (＾▽＾)
+        </div>
     }
     else
     {
         @foreach (var grupo in agrupadoPorEstudiante)
         {
             <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <strong>@grupo.Estudiante.NombreCompleto</strong>
-                    <span class="text-light"> - Fecha de inscripción: @grupo.Estudiante.FechaInscripcion.ToString("MMMM yyyy")</span>
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@grupo.Estudiante.NombreCompleto</strong><br />
+                        <small>Fecha de inscripción: @grupo.Estudiante.FechaInscripcion.ToString("MMMM yyyy")</small>
+                    </div>
+                    <span class="badge bg-warning text-dark fs-6">
+                        @grupo.Pendientes.Count pendiente(s)
+                    </span>
                 </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Mes Pendiente</th>
-                                <th>Monto</th>
-                                <th>Estado</th>
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <th>Acción</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var pendiente in grupo.Pendientes)
-                            {
-                                var fechaMes = DateTime.ParseExact(pendiente.periodo, "MM/yyyy", null);
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0">
+                            <thead>
                                 <tr>
-                                    <td>@fechaMes.ToString("MMMM yyyy")</td>
-                                    <td>@pendiente.monto.ToString("C")</td>
-                                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                                    @if (User.IsInRole("Admin"))
+                                    <th>Mes Pendiente</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                    @if (esAdmin)
                                     {
-                                        <td>
-                                            <a class="btn btn-sm btn-success"
-                                               asp-controller="Pagos"
-                                               asp-action="Create"
-                                               asp-route-estudianteId="@grupo.Estudiante.EstudianteId"
-                                               asp-route-periodo="@pendiente.periodo">
-                                                <i class="bi bi-cash-coin"></i> Pagar
-                                            </a>
-                                        </td>
+                                        <th>Acción</th>
                                     }
                                 </tr>
-
-                            }
-                        </tbody>
-                    </table>
-                    <p class="text-end text-muted">Total pendientes: <strong>@grupo.Pendientes.Count</strong></p>
+                            </thead>
+                            <tbody>
+                                @foreach (var pendiente in grupo.Pendientes)
+                                {
+                                    var fechaMes = DateTime.ParseExact(pendiente.periodo, "MM/yyyy", null);
+                                    <tr>
+                                        <td>@fechaMes.ToString("MMMM yyyy")</td>
+                                        <td>@pendiente.monto.ToString("C")</td>
+                                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                                        @if (esAdmin)
+                                        {
+                                            <td>
+                                                <a class="btn btn-sm btn-success"
+                                                   asp-controller="Pagos"
+                                                   asp-action="Create"
+                                                   asp-route-estudianteId="@grupo.Estudiante.EstudianteId"
+                                                   asp-route-periodo="@pendiente.periodo">
+                                                    <i class="bi bi-cash-coin"></i> Pagar
+                                                </a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         }

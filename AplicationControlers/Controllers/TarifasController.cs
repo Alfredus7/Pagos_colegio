@@ -25,24 +25,6 @@ namespace Pagos_colegio.Controllers
             return View(await _context.Tarifas.ToListAsync());
         }
 
-        // GET: Tarifas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tarifa = await _context.Tarifas
-                .FirstOrDefaultAsync(m => m.TarifaId == id);
-            if (tarifa == null)
-            {
-                return NotFound();
-            }
-
-            return View(tarifa);
-        }
-
         // GET: Tarifas/Create
         public IActionResult Create()
         {
