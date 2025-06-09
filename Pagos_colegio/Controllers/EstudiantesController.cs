@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Pagos_colegio_web.Data;
-using Pagos_colegio_web.Models;
+using Core_Models.Data;
+using Core_Models.Models;
 
-namespace Pagos_colegio_web.Controllers
+namespace Core_Models.Controllers
 {
     public class EstudiantesController : Controller
     {

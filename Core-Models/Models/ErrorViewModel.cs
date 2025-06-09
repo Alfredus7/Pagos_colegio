@@ -1,4 +1,4 @@
-namespace Pagos_colegio_web.Models
+namespace Core_Models.Models
 {
     public class ErrorViewModel
     {

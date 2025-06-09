@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Pagos_colegio_web.Models;
+using Core_Models.Models;
 using System.Diagnostics;
 
-namespace Pagos_colegio_web.Controllers
+namespace Core_Models.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Pagos_colegio_web.Data;
+using Core_Models.Data;
 using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

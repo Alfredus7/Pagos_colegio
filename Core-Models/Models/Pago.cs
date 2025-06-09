@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Pagos_colegio_web.Models
+namespace Core_Models.Models
 {
     public class Pago
     {

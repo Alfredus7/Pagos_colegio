@@ -1,7 +1,7 @@
 ﻿// ViewModels/ReciboViewModel.cs
-using Pagos_colegio_web.Models;
+using Core_Models.Models;
 
-namespace Pagos_colegio_web.ViewModels
+namespace Core_Models.ViewModels
 {
     public class ReciboViewModel
     {

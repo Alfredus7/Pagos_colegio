@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Pagos_colegio_web.Data;
+using Core_Models.Data;
 
 #nullable disable
 
-namespace Pagos_colegio_web.Migrations
+namespace Core_Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250609185330_inicio")]
-    partial class inicio
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,7 +224,7 @@ namespace Pagos_colegio_web.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Estudiante", b =>
+            modelBuilder.Entity("Core_Models.Models.Estudiante", b =>
                 {
                     b.Property<int>("EstudianteId")
                         .ValueGeneratedOnAdd()
@@ -261,7 +258,7 @@ namespace Pagos_colegio_web.Migrations
                     b.ToTable("Estudiantes");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Familia", b =>
+            modelBuilder.Entity("Core_Models.Models.Familia", b =>
                 {
                     b.Property<int>("FamiliaId")
                         .ValueGeneratedOnAdd()
@@ -290,7 +287,7 @@ namespace Pagos_colegio_web.Migrations
                     b.ToTable("Familias");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Pago", b =>
+            modelBuilder.Entity("Core_Models.Models.Pago", b =>
                 {
                     b.Property<int>("PagoId")
                         .ValueGeneratedOnAdd()
@@ -323,7 +320,7 @@ namespace Pagos_colegio_web.Migrations
                     b.ToTable("Pagos");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Tarifa", b =>
+            modelBuilder.Entity("Core_Models.Models.Tarifa", b =>
                 {
                     b.Property<int>("TarifaId")
                         .ValueGeneratedOnAdd()
@@ -400,15 +397,15 @@ namespace Pagos_colegio_web.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Estudiante", b =>
+            modelBuilder.Entity("Core_Models.Models.Estudiante", b =>
                 {
-                    b.HasOne("Pagos_colegio_web.Models.Familia", "Familia")
+                    b.HasOne("Core_Models.Models.Familia", "Familia")
                         .WithMany("Estudiantes")
                         .HasForeignKey("FamiliaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pagos_colegio_web.Models.Tarifa", "Tarifa")
+                    b.HasOne("Core_Models.Models.Tarifa", "Tarifa")
                         .WithMany()
                         .HasForeignKey("TarifaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -419,7 +416,7 @@ namespace Pagos_colegio_web.Migrations
                     b.Navigation("Tarifa");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Familia", b =>
+            modelBuilder.Entity("Core_Models.Models.Familia", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
                         .WithMany()
@@ -430,32 +427,32 @@ namespace Pagos_colegio_web.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Pago", b =>
+            modelBuilder.Entity("Core_Models.Models.Pago", b =>
                 {
-                    b.HasOne("Pagos_colegio_web.Models.Estudiante", "Estudiante")
+                    b.HasOne("Core_Models.Models.Estudiante", "Estudiante")
                         .WithMany("Pagos")
                         .HasForeignKey("EstudianteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pagos_colegio_web.Models.Tarifa", null)
+                    b.HasOne("Core_Models.Models.Tarifa", null)
                         .WithMany("Pagos")
                         .HasForeignKey("TarifaId");
 
                     b.Navigation("Estudiante");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Estudiante", b =>
+            modelBuilder.Entity("Core_Models.Models.Estudiante", b =>
                 {
                     b.Navigation("Pagos");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Familia", b =>
+            modelBuilder.Entity("Core_Models.Models.Familia", b =>
                 {
                     b.Navigation("Estudiantes");
                 });
 
-            modelBuilder.Entity("Pagos_colegio_web.Models.Tarifa", b =>
+            modelBuilder.Entity("Core_Models.Models.Tarifa", b =>
                 {
                     b.Navigation("Pagos");
                 });
