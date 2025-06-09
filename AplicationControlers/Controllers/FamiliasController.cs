@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Core_Models.Data;
-using Core_Models.Models;
-using Core_Models.ViewModels;
+using Pagos_colegio.Data;
+using Pagos_colegio.Models;
+using Pagos_colegio.ViewModels;
 using Rotativa.AspNetCore;
 
-namespace Core_Models.Controllers
+namespace Pagos_colegio.Controllers
 {
     public class FamiliasController : Controller
     {

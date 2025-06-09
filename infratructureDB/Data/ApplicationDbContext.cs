@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Core_Models.Models;
+using Pagos_colegio.Models;
 
-namespace Core_Models.Data
+namespace Pagos_colegio.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

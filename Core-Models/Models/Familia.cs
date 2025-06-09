@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-namespace Core_Models.Models
+namespace Pagos_colegio.Models
 {
     public class Familia
     {

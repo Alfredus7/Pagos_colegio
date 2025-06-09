@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Core_Models.Data;
+using Pagos_colegio.Data;
 
 #nullable disable
 
-namespace Core_Models.Migrations
+namespace Pagos_colegio.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250609185330_inicio")]

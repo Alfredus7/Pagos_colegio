@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Core_Models.Migrations
+namespace Pagos_colegio.Migrations
 {
     /// <inheritdoc />
     public partial class inicio : Migration
