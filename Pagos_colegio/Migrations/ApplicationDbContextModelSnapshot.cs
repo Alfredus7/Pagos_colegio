@@ -301,6 +301,10 @@ namespace Pagos_colegio_web.Migrations
                     b.Property<DateTime>("FechaPago")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Periodo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("TarifaId")
                         .HasColumnType("int");
 

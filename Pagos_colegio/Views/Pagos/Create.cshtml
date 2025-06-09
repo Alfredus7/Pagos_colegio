@@ -12,11 +12,26 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @{
+                var añoActual = DateTime.Now.Year;
+            }
+
             <div class="form-group">
-                <label asp-for="FechaPago" class="control-label"></label>
-                <input asp-for="FechaPago" class="form-control" />
-                <span asp-validation-for="FechaPago" class="text-danger"></span>
+                <label asp-for="Periodo" class="control-label"></label>
+                <select asp-for="Periodo" class="form-control">
+                    <option value="">Seleccione un mes</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        var mes = i.ToString("D2");
+                        var periodo = $"{mes}/{añoActual}";
+                        <option value="@periodo">@periodo</option>
+                    }
+                </select>
+                <span asp-validation-for="Periodo" class="text-danger"></span>
             </div>
+
+
             <div class="form-group">
                 <label asp-for="EstudianteId" class="control-label"></label>
                 <select asp-for="EstudianteId" class ="form-control" asp-items="ViewBag.EstudianteId"></select>

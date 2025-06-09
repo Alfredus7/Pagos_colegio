@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pagos_colegio_web.Migrations
 {
     /// <inheritdoc />
-    public partial class reinicio : Migration
+    public partial class inicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -229,6 +229,7 @@ namespace Pagos_colegio_web.Migrations
                     PagoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FechaPago = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Periodo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EstudianteId = table.Column<int>(type: "int", nullable: false),
                     TotalPago = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     TarifaId = table.Column<int>(type: "int", nullable: true)

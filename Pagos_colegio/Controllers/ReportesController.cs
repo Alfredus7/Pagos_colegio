@@ -55,47 +55,59 @@ namespace Pagos_colegio_web.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "Familia")]
-        public async Task<IActionResult> PagosPendientes()
+        [Authorize]
+        public async Task<IActionResult> PagosPendientes(int? estudianteId = null)
         {
-            var userId = _userManager.GetUserId(User);
-
-            var familia = await _context.Familias
-                .Include(f => f.Estudiantes)
-                    .ThenInclude(e => e.Pagos)
-                .Include(f => f.Estudiantes)
-                    .ThenInclude(e => e.Tarifa)
-                .FirstOrDefaultAsync(f => f.UsuarioId == userId);
-
-            if (familia == null)
-                return NotFound("No se encontró una familia asociada al usuario actual.");
-
             var pagosPendientes = new List<(Estudiante estudiante, string periodo, decimal monto)>();
             var hoy = DateTime.Today;
             var primerDiaDelMesActual = new DateTime(hoy.Year, hoy.Month, 1);
 
-            foreach (var estudiante in familia.Estudiantes)
+            var estudiantes = new List<Estudiante>();
+
+            if (User.IsInRole("Admin"))
+            {
+                estudiantes = await _context.Estudiantes
+                    .Include(e => e.Pagos)
+                    .Include(e => e.Tarifa)
+                    .ToListAsync();
+
+                if (estudianteId.HasValue)
+                    estudiantes = estudiantes.Where(e => e.EstudianteId == estudianteId.Value).ToList();
+            }
+            else if (User.IsInRole("Familia"))
+            {
+                var userId = _userManager.GetUserId(User);
+                var familia = await _context.Familias
+                    .Include(f => f.Estudiantes)
+                        .ThenInclude(e => e.Pagos)
+                    .Include(f => f.Estudiantes)
+                        .ThenInclude(e => e.Tarifa)
+                    .FirstOrDefaultAsync(f => f.UsuarioId == userId);
+
+                if (familia == null)
+                    return NotFound("No se encontró una familia asociada.");
+
+                estudiantes = familia.Estudiantes.ToList();
+            }
+
+            foreach (var estudiante in estudiantes)
             {
                 var tarifa = estudiante.Tarifa;
                 if (tarifa == null) continue;
 
-                // Comenzar desde el mes de inscripción o desde el inicio de la tarifa, el más reciente
                 var fechaInicio = new DateTime(estudiante.FechaInscripcion.Year, estudiante.FechaInscripcion.Month, 1);
                 var fechaTarifaInicio = new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1);
                 var fecha = (fechaInicio > fechaTarifaInicio) ? fechaInicio : fechaTarifaInicio;
-
-                // Terminar en el mes actual (no en el futuro)
                 var fechaFin = primerDiaDelMesActual;
 
                 while (fecha <= fechaFin)
                 {
-                    bool yaPagoEseMes = estudiante.Pagos.Any(p =>
-                        p.FechaPago.Year == fecha.Year && p.FechaPago.Month == fecha.Month);
+                    var periodo = fecha.ToString("MM/yyyy");
+                    bool yaPagado = estudiante.Pagos.Any(p => p.Periodo == periodo);
 
-                    if (!yaPagoEseMes)
+                    if (!yaPagado)
                     {
-                        var periodoTexto = fecha.ToString("MM/yyyy");
-                        pagosPendientes.Add((estudiante, periodoTexto, tarifa.Monto));
+                        pagosPendientes.Add((estudiante, periodo, tarifa.Monto));
                     }
 
                     fecha = fecha.AddMonths(1);

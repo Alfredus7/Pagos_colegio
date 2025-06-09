@@ -12,8 +12,8 @@ using Pagos_colegio_web.Data;
 namespace Pagos_colegio_web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250609145448_reinicio")]
-    partial class reinicio
+    [Migration("20250609185330_inicio")]
+    partial class inicio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -303,6 +303,10 @@ namespace Pagos_colegio_web.Migrations
 
                     b.Property<DateTime>("FechaPago")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Periodo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TarifaId")
                         .HasColumnType("int");

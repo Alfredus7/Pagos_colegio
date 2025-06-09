@@ -52,13 +52,13 @@ namespace Pagos_colegio_web.Controllers
             return View();
         }
 
-        // POST: Pagos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PagoId,FechaPago,EstudianteId")] Pago pago)
+        public async Task<IActionResult> Create([Bind("PagoId,EstudianteId,Periodo")] Pago pago)
         {
             var estudiante = await _context.Estudiantes
                 .Include(e => e.Tarifa)
+                .Include(e => e.Pagos)
                 .FirstOrDefaultAsync(e => e.EstudianteId == pago.EstudianteId);
 
             if (estudiante == null)
@@ -71,10 +71,17 @@ namespace Pagos_colegio_web.Controllers
             }
             else
             {
-                var tarifa = estudiante.Tarifa;
-                Debug.WriteLine($"Monto: {tarifa.Monto}, Descuento: {estudiante.Descuento}");
-                pago.TotalPago = Math.Round(tarifa.Monto * (1 - ((decimal)estudiante.Descuento / 100)), 2);
-
+                // Validar si ya existe un pago para ese periodo
+                bool yaPagadoEsePeriodo = estudiante.Pagos.Any(p => p.Periodo == pago.Periodo);
+                if (yaPagadoEsePeriodo)
+                {
+                    ModelState.AddModelError("Periodo", "Ya existe un pago registrado para este periodo.");
+                }
+                else
+                {
+                    var tarifa = estudiante.Tarifa;
+                    pago.TotalPago = Math.Round(tarifa.Monto * (1 - ((decimal)estudiante.Descuento / 100)), 2);
+                }
             }
 
             if (ModelState.IsValid)
@@ -87,6 +94,7 @@ namespace Pagos_colegio_web.Controllers
             ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
             return View(pago);
         }
+
 
 
         // GET: Pagos/Edit/5
