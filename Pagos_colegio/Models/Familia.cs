@@ -21,6 +21,7 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Apellido Materno")]
         public string ApellidoMaterno { get; set; }
 
+        // Relación con IdentityUser
         [Required]
         [Display(Name = "Usuario Asociado")]
         public string UsuarioId { get; set; }
@@ -28,9 +29,11 @@ namespace Pagos_colegio_web.Models
         [ForeignKey("UsuarioId")]
         public virtual IdentityUser Usuario { get; set; }
 
+        // Relación con Estudiantes
         [Display(Name = "Estudiantes a Cargo")]
         public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
 
+        // Propiedades no mapeadas
         [NotMapped]
         [Display(Name = "Nombre de Usuario")]
         public string NombreUsuario => Usuario?.UserName;

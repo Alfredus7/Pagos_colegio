@@ -9,8 +9,8 @@ namespace Pagos_colegio_web.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "ID Tarifa")]
         public int TarifaId { get; set; }
-        [StringLength(50)]
 
+        [StringLength(50)]
         [Display(Name = "Gestión")]
         public string Gestion { get; set; }
 
@@ -30,9 +30,11 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Monto")]
         public decimal Monto { get; set; }
 
+        // Relación con pagos
         [Display(Name = "Pagos Realizados")]
         public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 
+        // Propiedades calculadas
         [NotMapped]
         [Display(Name = "Periodo")]
         public string Periodo => $"{FechaInicio:MM/yyyy} - {FechaFin:MM/yyyy}";

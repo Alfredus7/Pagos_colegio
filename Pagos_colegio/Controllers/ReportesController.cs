@@ -8,6 +8,7 @@ using Rotativa.AspNetCore;
 
 namespace Pagos_colegio_web.Controllers
 {
+    [Authorize(Roles = "Familia,Admin")]
     public class ReportesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +20,11 @@ namespace Pagos_colegio_web.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = "Familia,Admin")]
+        /// <summary>
+        /// Genera un recibo de pago en formato PDF.
+        /// </summary>
+        /// <param name="id">ID del pago</param>
+        [HttpGet]
         public async Task<IActionResult> GenerarReciboPdf(int id)
         {
             var pago = await _context.Pagos
@@ -38,6 +43,10 @@ namespace Pagos_colegio_web.Controllers
             };
         }
 
+        /// <summary>
+        /// Muestra los pagos pendientes por estudiante de una familia.
+        /// </summary>
+        [HttpGet]
         [Authorize(Roles = "Familia")]
         public async Task<IActionResult> PagosPendientes()
         {
@@ -53,34 +62,21 @@ namespace Pagos_colegio_web.Controllers
             if (familia == null)
                 return NotFound("No se encontró una familia asociada al usuario actual.");
 
-            var pagosPendientes = new List<(Estudiante estudiante, Tarifa tarifa)>();
-
-            foreach (var estudiante in familia.Estudiantes)
-            {
-                var tarifa = estudiante.Tarifa;
-
-                if (tarifa == null)
-                    continue;
-
-                bool tarifaVigente = tarifa.FechaInicio <= DateTime.Now && tarifa.FechaFin >= DateTime.Now;
-
-                if (!tarifaVigente)
-                    continue;
-
-                bool yaPagado = estudiante.Pagos.Any(p =>
-                    p.FechaPago >= tarifa.FechaInicio &&
-                    p.FechaPago <= tarifa.FechaFin
-                );
-
-                if (!yaPagado)
-                {
-                    pagosPendientes.Add((estudiante, tarifa));
-                }
-            }
+            var pagosPendientes = familia.Estudiantes
+                .Where(e => e.Tarifa != null &&
+                            e.Tarifa.FechaInicio <= DateTime.Now &&
+                            e.Tarifa.FechaFin >= DateTime.Now &&
+                            !e.Pagos.Any(p => p.FechaPago >= e.Tarifa.FechaInicio && p.FechaPago <= e.Tarifa.FechaFin))
+                .Select(e => (e, e.Tarifa!))
+                .ToList();
 
             return View(pagosPendientes);
         }
 
+        /// <summary>
+        /// Muestra el historial de pagos para un estudiante específico.
+        /// </summary>
+        [HttpGet]
         [Authorize(Roles = "Familia")]
         public async Task<IActionResult> HistorialPagos(int? id)
         {
@@ -94,13 +90,18 @@ namespace Pagos_colegio_web.Controllers
 
             if (estudiante == null) return NotFound();
 
-            estudiante.Pagos = estudiante.Pagos.OrderByDescending(p => p.FechaPago).ToList();
+            estudiante.Pagos = estudiante.Pagos
+                .OrderByDescending(p => p.FechaPago)
+                .ToList();
 
             return View(estudiante);
         }
 
-
-
+        /// <summary>
+        /// Muestra un resumen de reportes para la familia actual:
+        /// historial completo, pagos del mes y deudas.
+        /// </summary>
+        [HttpGet]
         [Authorize(Roles = "Familia")]
         public async Task<IActionResult> Reportes()
         {
@@ -117,6 +118,7 @@ namespace Pagos_colegio_web.Controllers
                 return NotFound("No se encontró una familia asociada al usuario actual.");
 
             var estudiantes = familia.Estudiantes;
+            var now = DateTime.Now;
 
             // Historial completo
             var historialPagos = estudiantes
@@ -131,12 +133,9 @@ namespace Pagos_colegio_web.Controllers
                 .ToList();
 
             // Pagos del mes actual
-            var mesActual = DateTime.Now.Month;
-            var añoActual = DateTime.Now.Year;
-
             var pagosMes = estudiantes
                 .SelectMany(e => e.Pagos
-                    .Where(p => p.FechaPago.Month == mesActual && p.FechaPago.Year == añoActual)
+                    .Where(p => p.FechaPago.Month == now.Month && p.FechaPago.Year == now.Year)
                     .Select(p => new HistorialPagoItem
                     {
                         Estudiante = e.NombreCompleto,
@@ -147,28 +146,14 @@ namespace Pagos_colegio_web.Controllers
                 .OrderBy(p => p.Fecha)
                 .ToList();
 
-            // Deudas: solo tarifa asociada al estudiante y si no fue pagada
-            var deuda = new List<(Estudiante estudiante, Tarifa tarifa)>();
-
-            foreach (var estudiante in estudiantes)
-            {
-                var tarifa = estudiante.Tarifa;
-
-                if (tarifa == null)
-                    continue;
-
-                // Considerar solo tarifas ya vencidas
-                if (tarifa.FechaFin < DateTime.Now)
-                {
-                    bool pagado = estudiante.Pagos.Any(p =>
-                        p.FechaPago >= tarifa.FechaInicio && p.FechaPago <= tarifa.FechaFin);
-
-                    if (!pagado)
-                    {
-                        deuda.Add((estudiante, tarifa));
-                    }
-                }
-            }
+            // Deudas: tarifas vencidas no pagadas
+            var deuda = estudiantes
+                .Where(e => e.Tarifa != null &&
+                            e.Tarifa.FechaFin < now &&
+                            !e.Pagos.Any(p => p.FechaPago >= e.Tarifa.FechaInicio &&
+                                             p.FechaPago <= e.Tarifa.FechaFin))
+                .Select(e => (e, e.Tarifa!))
+                .ToList();
 
             var modelo = new ReporteViewModel
             {
@@ -179,7 +164,5 @@ namespace Pagos_colegio_web.Controllers
 
             return View(modelo);
         }
-
     }
 }
-

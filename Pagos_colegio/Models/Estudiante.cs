@@ -14,32 +14,35 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Nombre Completo")]
         public string Nombre { get; set; }
 
+        // Relación con Familia
         [Required(ErrorMessage = "Debe seleccionar una familia")]
         [Display(Name = "Familia")]
         public int FamiliaId { get; set; }
 
         [ForeignKey("FamiliaId")]
-        [Display(Name = "Familia")]
         public virtual Familia? Familia { get; set; }
 
+        // Relación con Pagos
         [Display(Name = "Pagos Realizados")]
-        public virtual ICollection<Pago>? Pagos { get; set; } = new List<Pago>();
+        public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 
+        // Propiedad combinada no mapeada a la BD
         [NotMapped]
         [Display(Name = "Nombre Completo")]
         public string NombreCompleto => $"{Nombre} {Familia?.ApellidoPaterno} {Familia?.ApellidoMaterno}";
 
+        // Fecha de inscripción
         [Required(ErrorMessage = "La fecha de inscripción es obligatoria")]
         [DataType(DataType.Date)]
         [Display(Name = "Fecha de Inscripción")]
         public DateTime FechaInscripcion { get; set; } = DateTime.Now;
 
+        // Relación con Tarifa
         [Required(ErrorMessage = "Debe asignarse una tarifa")]
         [Display(Name = "Tarifa Asignada")]
         public int TarifaId { get; set; }
 
         [ForeignKey("TarifaId")]
-        [Display(Name = "Tarifa Asignada")]
         public virtual Tarifa? Tarifa { get; set; }
     }
 }

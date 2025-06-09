@@ -1,35 +1,36 @@
 ﻿@model List<(Pagos_colegio_web.Models.Estudiante estudiante, Pagos_colegio_web.Models.Tarifa tarifa)>
 
-
 @{
     ViewData["Title"] = "Pagos Pendientes";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container py-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
 
-@if (!Model.Any())
-{
-    <p>No hay pagos pendientes. ¡Todo está al día!</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Estudiante</th>
-                <th>Periodo</th>
-                <th>Monto</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    @if (!Model.Any())
+    {
+        <div class="alert alert-success">No hay pagos pendientes. ¡Todo está al día!</div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <td>@item.estudiante.NombreCompleto</td>
-                    <td>@item.tarifa.Periodo</td>
-                    <td>@item.tarifa.Monto.ToString("C")</td>
+                    <th>Estudiante</th>
+                    <th>Periodo</th>
+                    <th>Monto</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.estudiante.NombreCompleto</td>
+                        <td>@item.tarifa.Periodo</td>
+                        <td>@item.tarifa.Monto.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

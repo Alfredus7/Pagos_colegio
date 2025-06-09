@@ -15,22 +15,22 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Fecha de Pago")]
         public DateTime FechaPago { get; set; } = DateTime.Now;
 
+        // Relación con Estudiante
         [Required(ErrorMessage = "Debe seleccionar un estudiante")]
         [Display(Name = "Estudiante")]
         public int EstudianteId { get; set; }
 
         [ForeignKey("EstudianteId")]
-        [Display(Name = "Estudiante")]
         public virtual Estudiante? Estudiante { get; set; }
 
+        // Montos
         [Column(TypeName = "decimal(10, 2)")]
-        [Display(Name = "Descuento Aplicado")]
         [Range(0, double.MaxValue, ErrorMessage = "El descuento no puede ser negativo")]
+        [Display(Name = "Descuento Aplicado")]
         public decimal Descuento { get; set; } = 0;
 
         [Column(TypeName = "decimal(10, 2)")]
         [Display(Name = "Total Pagado")]
         public decimal TotalPago { get; set; }
-
     }
 }

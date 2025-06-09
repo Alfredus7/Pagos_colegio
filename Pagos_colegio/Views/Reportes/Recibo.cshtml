@@ -1,13 +1,14 @@
 ﻿@model Pagos_colegio_web.Models.Pago
-
 @{
-    Layout = null; // Para PDF limpio
+    Layout = null; // Limpio para PDF
 }
 
-<h2 style="text-align:center">Recibo de Pago</h2>
-
-<p><strong>Estudiante:</strong> @Model.Estudiante.NombreCompleto</p>
-<p><strong>Fecha de Pago:</strong> @Model.FechaPago.ToShortDateString()</p>
-<p><strong>Recibo ID:</strong> @Model.PagoId</p>
-<p><strong>Descuento aplicado:</strong> @Model.Descuento %</p>
-<p><strong>Total pagado:</strong> @Model.TotalPago.ToString("C")</p>
+<div style="padding: 2rem; font-family: Arial, sans-serif;">
+    <h2 style="text-align:center;">Recibo de Pago</h2>
+    <hr />    
+    <p><strong>Recibo ID:</strong> @Model.PagoId</p>
+    <p><strong>Estudiante:</strong> @Model.Estudiante.NombreCompleto</p>
+    <p><strong>Fecha de Pago:</strong> @Model.FechaPago.ToShortDateString()</p>
+    <p><strong>Descuento aplicado:</strong> @Model.Descuento %</p>
+    <p><strong>Total pagado:</strong> @Model.TotalPago.ToString("C")</p>
+</div>
