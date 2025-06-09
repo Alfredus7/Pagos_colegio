@@ -19,18 +19,27 @@ namespace Pagos_colegio_web.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
+        private void CargarSelectLists()
         {
-            var applicationDbContext = _context.Estudiantes.Include(e => e.Familia).Include(e => e.Tarifa);
             var familias = _context.Familias.Include(f => f.Usuario).ToList();
             var tarifas = _context.Tarifas.ToList();
 
             ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario");
             ViewBag.TarifaId = new SelectList(tarifas, "TarifaId", "Gestion");
-            return View(await applicationDbContext.ToListAsync());
         }
+        // Acción solo para admin
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Index()
+        {
+            CargarSelectLists();
 
+            var estudiantes = await _context.Estudiantes
+                .Include(e => e.Familia)
+                .Include(e => e.Tarifa)
+                .ToListAsync();
+
+            return View(estudiantes);
+        }
         [Authorize(Roles = "Familia")]
         public async Task<IActionResult> VerHijos()
         {
@@ -45,8 +54,10 @@ namespace Pagos_colegio_web.Controllers
             if (familia == null)
                 return NotFound("No se encontró una familia asociada al usuario actual.");
 
+            // Puedes usar una vista específica como "MisHijos.cshtml"
             return View("Index", familia.Estudiantes);
         }
+
 
         // CRUD para Admin
 
@@ -98,7 +109,7 @@ namespace Pagos_colegio_web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId")] Estudiante estudiante)
+        public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId,Descuento")] Estudiante estudiante)
         {
             if (id != estudiante.EstudianteId) return NotFound();
 

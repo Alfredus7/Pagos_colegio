@@ -1,14 +1,83 @@
-﻿@model Pagos_colegio_web.Models.Pago
+﻿@model Pagos_colegio_web.ViewModels.ReciboViewModel
 @{
-    Layout = null; // Limpio para PDF
+    Layout = null;
+    var pago = Model.Pago;
+    var estudiante = Model.Estudiante;
+    var familia = Model.Familia;
+    var tarifa = Model.Tarifa;
 }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Recibo de Pago</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            padding: 2rem;
+            color: #333;
+        }
 
-<div style="padding: 2rem; font-family: Arial, sans-serif;">
-    <h2 style="text-align:center;">Recibo de Pago</h2>
-    <hr />    
-    <p><strong>Recibo ID:</strong> @Model.PagoId</p>
-    <p><strong>Estudiante:</strong> @Model.Estudiante.NombreCompleto</p>
-    <p><strong>Fecha de Pago:</strong> @Model.FechaPago.ToShortDateString()</p>
-    <p><strong>Descuento aplicado:</strong> @Model.Estudiante.Descuento %</p>
-    <p><strong>Total pagado:</strong> @Model.TotalPago.ToString("C")</p>
-</div>
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .seccion {
+            margin-bottom: 1.2rem;
+        }
+
+            .seccion p {
+                margin: 0.3rem 0;
+            }
+
+        .resaltado {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        hr {
+            border: 1px solid #ccc;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Recibo de Pago</h2>
+    <hr />
+
+    <div class="seccion">
+        <p><span class="resaltado">Recibo N°:</span> @pago.PagoId</p>
+        <p><span class="resaltado">Fecha de Emisión:</span> @DateTime.Now.ToShortDateString()</p>
+        <p><span class="resaltado">Fecha de Pago:</span> @pago.FechaPago.ToShortDateString()</p>
+        <p><span class="resaltado">Mes Cancelado:</span> @Model.Periodo</p>
+    </div>
+
+    <div class="seccion">
+        <p><span class="resaltado">Estudiante:</span> @estudiante?.NombreCompleto</p>
+        <p><span class="resaltado">Familia:</span> @familia?.ApellidoPaterno @familia?.ApellidoMaterno</p>
+        <p><span class="resaltado">Gestión / Periodo:</span> @tarifa?.Gestion</p>
+    </div>
+
+    <div class="seccion">
+        <p><span class="resaltado">Monto Base:</span> @tarifa?.Monto.ToString("C")</p>
+        <p><span class="resaltado">Descuento Aplicado:</span> @estudiante?.Descuento.ToString("P0")</p>
+        <p><span class="resaltado">Total Pagado:</span> @pago.TotalPago.ToString("C")</p>
+    </div>
+
+    <hr />
+    <div class="footer">
+        Este recibo certifica que el pago ha sido recibido correctamente.<br />
+        Gracias por su puntualidad.
+    </div>
+</body>
+</html>

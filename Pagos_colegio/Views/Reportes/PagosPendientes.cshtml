@@ -1,12 +1,19 @@
 ﻿@model List<(Pagos_colegio_web.Models.Estudiante estudiante, string periodo, decimal monto)>
 
-
 @{
     ViewData["Title"] = "Pagos Pendientes";
+    var agrupadoPorEstudiante = Model
+        .GroupBy(p => p.estudiante)
+        .Select(g => new
+        {
+            Estudiante = g.Key,
+            Pendientes = g.Select(x => new { x.periodo, x.monto }).ToList()
+        })
+        .ToList();
 }
 
 <div class="container py-4">
-    <h2 class="mb-4">@ViewData["Title"]</h2>
+    <h2 class="mb-4 text-primary"><i class="bi bi-exclamation-circle"></i> @ViewData["Title"]</h2>
 
     @if (!Model.Any())
     {
@@ -14,25 +21,37 @@
     }
     else
     {
-        <table class="table table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Estudiante</th>
-                    <th>Periodo</th>
-                    <th>Monto</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.estudiante.NombreCompleto</td>
-                        <td>@item.periodo</td>
-                        <td>@item.monto.ToString("C")</td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
+        @foreach (var grupo in agrupadoPorEstudiante)
+        {
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>@grupo.Estudiante.NombreCompleto</strong>
+                    <span class="text-light"> - Fecha de inscripción: @grupo.Estudiante.FechaInscripcion.ToString("MMMM yyyy")</span>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mes Pendiente</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pendiente in grupo.Pendientes)
+                            {
+                                var fechaMes = DateTime.ParseExact(pendiente.periodo, "MM/yyyy", null);
+                                <tr>
+                                    <td>@fechaMes.ToString("MMMM yyyy")</td>
+                                    <td>@pendiente.monto.ToString("C")</td>
+                                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <p class="text-end text-muted">Total pendientes: <strong>@grupo.Pendientes.Count</strong></p>
+                </div>
+            </div>
+        }
     }
 </div>

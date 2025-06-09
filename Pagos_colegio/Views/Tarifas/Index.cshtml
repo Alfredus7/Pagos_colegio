@@ -24,6 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Monto)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MontoTotal)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -54,6 +57,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Monto)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MontoTotal)
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.TarifaId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.TarifaId">Details</a> |

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
+using Pagos_colegio_web.ViewModels;
 using Rotativa.AspNetCore;
 
 namespace Pagos_colegio_web.Controllers
@@ -23,25 +24,35 @@ namespace Pagos_colegio_web.Controllers
         /// <summary>
         /// Genera un recibo de pago en formato PDF.
         /// </summary>
-        /// <param name="id">ID del pago</param>
         [HttpGet]
         public async Task<IActionResult> GenerarReciboPdf(int id)
         {
             var pago = await _context.Pagos
                 .Include(p => p.Estudiante)
                     .ThenInclude(e => e.Familia)
+                .Include(p => p.Estudiante)
+                    .ThenInclude(e => e.Tarifa) // <- Esto es lo que faltaba
                 .FirstOrDefaultAsync(p => p.PagoId == id);
 
             if (pago == null)
                 return NotFound();
 
-            return new ViewAsPdf("Recibo", pago)
+            var viewModel = new ReciboViewModel
+            {
+                Pago = pago,
+                Periodo = $"{pago.FechaPago:MM/yyyy}"
+            };
+
+            return new ViewAsPdf("Recibo", viewModel)
             {
                 FileName = $"Recibo_{pago.PagoId}.pdf",
                 PageSize = Rotativa.AspNetCore.Options.Size.A5,
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait
             };
         }
+
+
+
 
         [HttpGet]
         [Authorize(Roles = "Familia")]
@@ -93,7 +104,6 @@ namespace Pagos_colegio_web.Controllers
 
             return View(pagosPendientes);
         }
-
 
         /// <summary>
         /// Muestra el historial de pagos para un estudiante específico.
@@ -148,43 +158,36 @@ namespace Pagos_colegio_web.Controllers
                 {
                     Estudiante = e.NombreCompleto,
                     Fecha = p.FechaPago,
-                    Periodo = e.Tarifa?.Periodo ?? "N/A",
-                    Monto = e.Tarifa?.Monto ?? 0
+                    Periodo = p.FechaPago.ToString("MM/yyyy"),
+                    Monto = p.TotalPago
                 }))
                 .OrderBy(p => p.Fecha)
                 .ToList();
 
             // Pagos del mes actual
-            var pagosMes = estudiantes
-                .SelectMany(e => e.Pagos
-                    .Where(p => p.FechaPago.Month == now.Month && p.FechaPago.Year == now.Year)
-                    .Select(p => new HistorialPagoItem
-                    {
-                        Estudiante = e.NombreCompleto,
-                        Fecha = p.FechaPago,
-                        Periodo = e.Tarifa?.Periodo ?? "N/A",
-                        Monto = e.Tarifa?.Monto ?? 0
-                    }))
-                .OrderBy(p => p.Fecha)
+            var pagosMes = historialPagos
+                .Where(p => p.Fecha.Month == now.Month && p.Fecha.Year == now.Year)
                 .ToList();
 
             // Deudas: tarifas vencidas no pagadas
             var deuda = estudiantes
-                .Where(e => e.Tarifa != null &&
-                            e.Tarifa.FechaFin < now &&
-                            !e.Pagos.Any(p => p.FechaPago >= e.Tarifa.FechaInicio &&
-                                             p.FechaPago <= e.Tarifa.FechaFin))
+                .Where(e =>
+                    e.Tarifa != null &&
+                    e.Tarifa.FechaFin < now &&
+                    !e.Pagos.Any(p => p.FechaPago >= e.Tarifa.FechaInicio && p.FechaPago <= e.Tarifa.FechaFin))
                 .Select(e => (e, e.Tarifa!))
                 .ToList();
 
             var modelo = new ReporteViewModel
             {
                 Historial = historialPagos,
-                Deuda = deuda,
-                PagosDelMes = pagosMes
+                PagosDelMes = pagosMes,
+                Deuda = deuda
             };
 
             return View(modelo);
         }
+
     }
 }
+
