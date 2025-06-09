@@ -62,7 +62,7 @@ namespace Pagos_colegio_web.Controllers
             var hoy = DateTime.Today;
             var primerDiaDelMesActual = new DateTime(hoy.Year, hoy.Month, 1);
 
-            var estudiantes = new List<Estudiante>();
+            List<Estudiante> estudiantes = new();
 
             if (User.IsInRole("Admin"))
             {
@@ -72,7 +72,11 @@ namespace Pagos_colegio_web.Controllers
                     .ToListAsync();
 
                 if (estudianteId.HasValue)
-                    estudiantes = estudiantes.Where(e => e.EstudianteId == estudianteId.Value).ToList();
+                {
+                    estudiantes = estudiantes
+                        .Where(e => e.EstudianteId == estudianteId.Value)
+                        .ToList();
+                }
             }
             else if (User.IsInRole("Familia"))
             {
@@ -87,13 +91,18 @@ namespace Pagos_colegio_web.Controllers
                 if (familia == null)
                     return NotFound("No se encontró una familia asociada.");
 
-                estudiantes = familia.Estudiantes.ToList();
+                estudiantes = familia.Estudiantes
+                    .Where(e => e.Tarifa != null)
+                    .ToList();
             }
 
             foreach (var estudiante in estudiantes)
             {
                 var tarifa = estudiante.Tarifa;
                 if (tarifa == null) continue;
+
+                // Aseguramos que pagos estén bien cargados
+                var pagos = estudiante.Pagos ?? new List<Pago>();
 
                 var fechaInicio = new DateTime(estudiante.FechaInscripcion.Year, estudiante.FechaInscripcion.Month, 1);
                 var fechaTarifaInicio = new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1);
@@ -103,7 +112,8 @@ namespace Pagos_colegio_web.Controllers
                 while (fecha <= fechaFin)
                 {
                     var periodo = fecha.ToString("MM/yyyy");
-                    bool yaPagado = estudiante.Pagos.Any(p => p.Periodo == periodo);
+
+                    bool yaPagado = pagos.Any(p => p.Periodo == periodo);
 
                     if (!yaPagado)
                     {
@@ -116,6 +126,8 @@ namespace Pagos_colegio_web.Controllers
 
             return View(pagosPendientes);
         }
+
+
 
         /// <summary>
         /// Muestra el historial de pagos para un estudiante específico.

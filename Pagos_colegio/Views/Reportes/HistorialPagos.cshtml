@@ -14,18 +14,17 @@
                 <tr>
                     <th>Fecha de Pago</th>
                     <th>Monto Pagado</th>
-                    <th>Periodo (estimado)</th>
+                    <th>Periodo</th>
                     <th>Recibo</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var pago in Model.Pagos)
                 {
-                    var periodo = pago.FechaPago.ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-ES"));
                     <tr>
                         <td>@pago.FechaPago.ToShortDateString()</td>
                         <td>@pago.TotalPago.ToString("C")</td>
-                        <td>@periodo</td>
+                        <td>@pago.Periodo</td>
                         <td>
                             <a asp-controller="Reportes" asp-action="GenerarReciboPdf" asp-route-id="@pago.PagoId" target="_blank" class="btn btn-sm btn-success">
                                 PDF
