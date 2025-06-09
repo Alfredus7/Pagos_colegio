@@ -9,6 +9,6 @@
     <p><strong>Recibo ID:</strong> @Model.PagoId</p>
     <p><strong>Estudiante:</strong> @Model.Estudiante.NombreCompleto</p>
     <p><strong>Fecha de Pago:</strong> @Model.FechaPago.ToShortDateString()</p>
-    <p><strong>Descuento aplicado:</strong> @Model.Descuento %</p>
+    <p><strong>Descuento aplicado:</strong> @Model.Estudiante.Descuento %</p>
     <p><strong>Total pagado:</strong> @Model.TotalPago.ToString("C")</p>
 </div>

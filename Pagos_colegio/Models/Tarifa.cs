@@ -42,5 +42,18 @@ namespace Pagos_colegio_web.Models
         [NotMapped]
         [Display(Name = "Vigente")]
         public bool EstaVigente => DateTime.Now >= FechaInicio && DateTime.Now <= FechaFin;
+
+        [NotMapped]
+        [Display(Name = "Monto Total")]
+        public decimal MontoTotal
+        {
+            get
+            {
+                var fechaFin = (FechaFin.Year == 1) ? DateTime.Today : FechaFin;
+                int cantidadMeses = ((fechaFin.Year - FechaInicio.Year) * 12) + (fechaFin.Month - FechaInicio.Month) + 1;
+                return Math.Round(Monto * cantidadMeses, 2);
+            }
+        }
+
     }
 }

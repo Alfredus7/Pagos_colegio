@@ -22,6 +22,9 @@
                 @Html.DisplayNameFor(model => model.FechaInscripcion)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Descuento)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Tarifa)
             </th>
             <th></th>
@@ -39,6 +42,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.FechaInscripcion)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descuento)
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Tarifa.Gestion)
             </td>

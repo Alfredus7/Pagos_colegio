@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pagos_colegio_web.Migrations
 {
     /// <inheritdoc />
-    public partial class inicio : Migration
+    public partial class reinicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,7 @@ namespace Pagos_colegio_web.Migrations
                 {
                     TarifaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Gestion = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Gestion = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Monto = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
@@ -201,6 +201,7 @@ namespace Pagos_colegio_web.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     FamiliaId = table.Column<int>(type: "int", nullable: false),
+                    Descuento = table.Column<int>(type: "int", nullable: false),
                     FechaInscripcion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TarifaId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -229,7 +230,6 @@ namespace Pagos_colegio_web.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FechaPago = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EstudianteId = table.Column<int>(type: "int", nullable: false),
-                    Descuento = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     TotalPago = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     TarifaId = table.Column<int>(type: "int", nullable: true)
                 },

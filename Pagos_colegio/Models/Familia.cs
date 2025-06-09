@@ -41,5 +41,7 @@ namespace Pagos_colegio_web.Models
         [NotMapped]
         [Display(Name = "Familia")]
         public string NombreFamilia => $"{ApellidoPaterno} {ApellidoMaterno}";
+
+
     }
 }

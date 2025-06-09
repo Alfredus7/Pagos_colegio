@@ -19,6 +19,10 @@ namespace Pagos_colegio_web.Models
         [Display(Name = "Familia")]
         public int FamiliaId { get; set; }
 
+        [Range(0, 100, ErrorMessage = "El descuento debe estar entre 0% y 100%")]
+        [Display(Name = "Descuento (%)")]
+        public int Descuento { get; set; }
+
         [ForeignKey("FamiliaId")]
         public virtual Familia? Familia { get; set; }
 

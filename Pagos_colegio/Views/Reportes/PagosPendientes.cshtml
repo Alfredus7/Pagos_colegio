@@ -1,4 +1,5 @@
-﻿@model List<(Pagos_colegio_web.Models.Estudiante estudiante, Pagos_colegio_web.Models.Tarifa tarifa)>
+﻿@model List<(Pagos_colegio_web.Models.Estudiante estudiante, string periodo, decimal monto)>
+
 
 @{
     ViewData["Title"] = "Pagos Pendientes";
@@ -26,10 +27,11 @@
                 {
                     <tr>
                         <td>@item.estudiante.NombreCompleto</td>
-                        <td>@item.tarifa.Periodo</td>
-                        <td>@item.tarifa.Monto.ToString("C")</td>
+                        <td>@item.periodo</td>
+                        <td>@item.monto.ToString("C")</td>
                     </tr>
                 }
+
             </tbody>
         </table>
     }

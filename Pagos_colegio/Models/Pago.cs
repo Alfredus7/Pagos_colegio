@@ -23,12 +23,6 @@ namespace Pagos_colegio_web.Models
         [ForeignKey("EstudianteId")]
         public virtual Estudiante? Estudiante { get; set; }
 
-        // Montos
-        [Column(TypeName = "decimal(10, 2)")]
-        [Range(0, double.MaxValue, ErrorMessage = "El descuento no puede ser negativo")]
-        [Display(Name = "Descuento Aplicado")]
-        public decimal Descuento { get; set; } = 0;
-
         [Column(TypeName = "decimal(10, 2)")]
         [Display(Name = "Total Pagado")]
         public decimal TotalPago { get; set; }

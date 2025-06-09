@@ -232,6 +232,9 @@ namespace Pagos_colegio_web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EstudianteId"));
 
+                    b.Property<int>("Descuento")
+                        .HasColumnType("int");
+
                     b.Property<int>("FamiliaId")
                         .HasColumnType("int");
 
@@ -292,9 +295,6 @@ namespace Pagos_colegio_web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PagoId"));
 
-                    b.Property<decimal>("Descuento")
-                        .HasColumnType("decimal(10, 2)");
-
                     b.Property<int>("EstudianteId")
                         .HasColumnType("int");
 
@@ -331,7 +331,6 @@ namespace Pagos_colegio_web.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Gestion")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 

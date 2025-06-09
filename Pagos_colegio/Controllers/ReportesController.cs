@@ -43,9 +43,6 @@ namespace Pagos_colegio_web.Controllers
             };
         }
 
-        /// <summary>
-        /// Muestra los pagos pendientes por estudiante de una familia.
-        /// </summary>
         [HttpGet]
         [Authorize(Roles = "Familia")]
         public async Task<IActionResult> PagosPendientes()
@@ -62,16 +59,41 @@ namespace Pagos_colegio_web.Controllers
             if (familia == null)
                 return NotFound("No se encontró una familia asociada al usuario actual.");
 
-            var pagosPendientes = familia.Estudiantes
-                .Where(e => e.Tarifa != null &&
-                            e.Tarifa.FechaInicio <= DateTime.Now &&
-                            e.Tarifa.FechaFin >= DateTime.Now &&
-                            !e.Pagos.Any(p => p.FechaPago >= e.Tarifa.FechaInicio && p.FechaPago <= e.Tarifa.FechaFin))
-                .Select(e => (e, e.Tarifa!))
-                .ToList();
+            var pagosPendientes = new List<(Estudiante estudiante, string periodo, decimal monto)>();
+            var hoy = DateTime.Today;
+            var primerDiaDelMesActual = new DateTime(hoy.Year, hoy.Month, 1);
+
+            foreach (var estudiante in familia.Estudiantes)
+            {
+                var tarifa = estudiante.Tarifa;
+                if (tarifa == null) continue;
+
+                // Comenzar desde el mes de inscripción o desde el inicio de la tarifa, el más reciente
+                var fechaInicio = new DateTime(estudiante.FechaInscripcion.Year, estudiante.FechaInscripcion.Month, 1);
+                var fechaTarifaInicio = new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1);
+                var fecha = (fechaInicio > fechaTarifaInicio) ? fechaInicio : fechaTarifaInicio;
+
+                // Terminar en el mes actual (no en el futuro)
+                var fechaFin = primerDiaDelMesActual;
+
+                while (fecha <= fechaFin)
+                {
+                    bool yaPagoEseMes = estudiante.Pagos.Any(p =>
+                        p.FechaPago.Year == fecha.Year && p.FechaPago.Month == fecha.Month);
+
+                    if (!yaPagoEseMes)
+                    {
+                        var periodoTexto = fecha.ToString("MM/yyyy");
+                        pagosPendientes.Add((estudiante, periodoTexto, tarifa.Monto));
+                    }
+
+                    fecha = fecha.AddMonths(1);
+                }
+            }
 
             return View(pagosPendientes);
         }
+
 
         /// <summary>
         /// Muestra el historial de pagos para un estudiante específico.

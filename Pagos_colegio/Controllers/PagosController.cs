@@ -54,25 +54,24 @@ namespace Pagos_colegio_web.Controllers
         // POST: Pagos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PagoId,FechaPago,EstudianteId,Descuento")] Pago pago)
+        public async Task<IActionResult> Create([Bind("PagoId,FechaPago,EstudianteId")] Pago pago)
         {
-            var estudiante = await _context.Estudiantes.FindAsync(pago.EstudianteId);
+            var estudiante = await _context.Estudiantes
+                .Include(e => e.Tarifa)
+                .FirstOrDefaultAsync(e => e.EstudianteId == pago.EstudianteId);
+
             if (estudiante == null)
             {
-                ModelState.AddModelError("EstudianteId", "Estudiante no encontrado");
+                ModelState.AddModelError("EstudianteId", "Estudiante no encontrado.");
+            }
+            else if (estudiante.Tarifa == null)
+            {
+                ModelState.AddModelError("", "El estudiante no tiene una tarifa asignada.");
             }
             else
             {
-                var tarifa = await _context.Tarifas.FindAsync(estudiante.TarifaId);
-                if (tarifa == null)
-                {
-                    ModelState.AddModelError("", "Tarifa no encontrada para el estudiante");
-                }
-                else
-                {
-                    // Calcular TotalPago antes de validar el modelo
-                    pago.TotalPago = Math.Round(tarifa.Monto * (1 - (pago.Descuento / 100)), 2);
-                }
+                var tarifa = estudiante.Tarifa;
+                pago.TotalPago = Math.Round(tarifa.Monto * (1 - (estudiante.Descuento / 100)), 2);
             }
 
             if (ModelState.IsValid)
@@ -85,6 +84,7 @@ namespace Pagos_colegio_web.Controllers
             ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", pago.EstudianteId);
             return View(pago);
         }
+
 
         // GET: Pagos/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -123,7 +123,7 @@ namespace Pagos_colegio_web.Controllers
                     return View(pago);
                 }
 
-                pago.TotalPago = Math.Round(tarifa.Monto * (1 - (pago.Descuento / 100)), 2);
+                pago.TotalPago = Math.Round(tarifa.Monto * (1 - (estudiante.Descuento / 100)), 2);
 
                 try
                 {

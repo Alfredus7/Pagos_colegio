@@ -63,7 +63,7 @@ namespace Pagos_colegio_web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId")] Estudiante estudiante)
+        public async Task<IActionResult> Create([Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId,Descuento")] Estudiante estudiante)
         {
             if (ModelState.IsValid)
             {
