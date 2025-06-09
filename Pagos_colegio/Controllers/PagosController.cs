@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Pagos_colegio_web.Data;
 using Pagos_colegio_web.Models;
 using Rotativa.AspNetCore;
+using System.Diagnostics;
 
 namespace Pagos_colegio_web.Controllers
 {
@@ -71,7 +72,9 @@ namespace Pagos_colegio_web.Controllers
             else
             {
                 var tarifa = estudiante.Tarifa;
-                pago.TotalPago = Math.Round(tarifa.Monto * (1 - (estudiante.Descuento / 100)), 2);
+                Debug.WriteLine($"Monto: {tarifa.Monto}, Descuento: {estudiante.Descuento}");
+                pago.TotalPago = Math.Round(tarifa.Monto * (1 - ((decimal)estudiante.Descuento / 100)), 2);
+
             }
 
             if (ModelState.IsValid)
