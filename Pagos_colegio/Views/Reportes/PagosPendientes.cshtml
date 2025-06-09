@@ -35,6 +35,10 @@
                                 <th>Mes Pendiente</th>
                                 <th>Monto</th>
                                 <th>Estado</th>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <th>Acción</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
@@ -45,7 +49,20 @@
                                     <td>@fechaMes.ToString("MMMM yyyy")</td>
                                     <td>@pendiente.monto.ToString("C")</td>
                                     <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <td>
+                                            <a class="btn btn-sm btn-success"
+                                               asp-controller="Pagos"
+                                               asp-action="Create"
+                                               asp-route-estudianteId="@grupo.Estudiante.EstudianteId"
+                                               asp-route-periodo="@pendiente.periodo">
+                                                <i class="bi bi-cash-coin"></i> Pagar
+                                            </a>
+                                        </td>
+                                    }
                                 </tr>
+
                             }
                         </tbody>
                     </table>

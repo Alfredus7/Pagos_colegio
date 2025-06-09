@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -46,11 +47,23 @@ namespace Pagos_colegio_web.Controllers
         }
 
         // GET: Pagos/Create
-        public IActionResult Create()
+        // GET: Pagos/Create
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create(int? estudianteId, string? periodo)
         {
-            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto");
-            return View();
+            ViewData["EstudianteId"] = new SelectList(_context.Estudiantes, "EstudianteId", "NombreCompleto", estudianteId);
+
+            var pago = new Pago();
+
+            if (estudianteId.HasValue)
+                pago.EstudianteId = estudianteId.Value;
+
+            if (!string.IsNullOrEmpty(periodo))
+                pago.Periodo = periodo;
+
+            return View(pago);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
