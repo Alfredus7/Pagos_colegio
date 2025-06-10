@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Pagos_colegio.Migrations
+namespace infratructureDB.Migrations
 {
     /// <inheritdoc />
-    public partial class inicio : Migration
+    public partial class reinicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +59,7 @@ namespace Pagos_colegio.Migrations
                     Gestion = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Monto = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                    Mensualidad = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {

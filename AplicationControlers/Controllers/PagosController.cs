@@ -75,7 +75,7 @@ namespace Pagos_colegio.Controllers
                 else
                 {
                     var tarifa = estudiante.Tarifa;
-                    pago.TotalPago = Math.Round(tarifa.Monto * (1 - ((decimal)estudiante.Descuento / 100)), 2);
+                    pago.TotalPago = Math.Round(tarifa.Mensualidad * (1 - ((decimal)estudiante.Descuento / 100)), 2);
                 }
             }
 
@@ -129,7 +129,7 @@ namespace Pagos_colegio.Controllers
                     return View(pago);
                 }
 
-                pago.TotalPago = Math.Round(tarifa.Monto * (1 - (estudiante.Descuento / 100)), 2);
+                pago.TotalPago = Math.Round(tarifa.Mensualidad * (1 - (estudiante.Descuento / 100)), 2);
 
                 try
                 {

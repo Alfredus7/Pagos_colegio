@@ -119,7 +119,8 @@ namespace Pagos_colegio.Controllers
 
                     if (!yaPagado)
                     {
-                        pagosPendientes.Add((estudiante, periodo, tarifa.Monto));
+                        var TotalPagar = Math.Round(tarifa.Mensualidad * (1 - ((decimal)estudiante.Descuento / 100)), 2);
+                        pagosPendientes.Add((estudiante, periodo, TotalPagar));
                     }
 
                     fecha = fecha.AddMonths(1);
@@ -185,7 +186,7 @@ namespace Pagos_colegio.Controllers
                     Estudiante = e.NombreCompleto,
                     Fecha = p.FechaPago,
                     Periodo = p.FechaPago.ToString("MM/yyyy"),
-                    Monto = p.TotalPago
+                    MontoPagado = p.TotalPago
                 }))
                 .OrderBy(p => p.Fecha)
                 .ToList();

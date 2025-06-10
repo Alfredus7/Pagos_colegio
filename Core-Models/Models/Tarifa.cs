@@ -27,8 +27,8 @@ namespace Pagos_colegio.Models
         [Required(ErrorMessage = "El monto es obligatorio")]
         [Column(TypeName = "decimal(10, 2)")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor a cero")]
-        [Display(Name = "Monto")]
-        public decimal Monto { get; set; }
+        [Display(Name = "Mensualidad")]
+        public decimal Mensualidad { get; set; }
 
         // Relación con pagos
         [Display(Name = "Pagos Realizados")]
@@ -44,14 +44,14 @@ namespace Pagos_colegio.Models
         public bool EstaVigente => DateTime.Now >= FechaInicio && DateTime.Now <= FechaFin;
 
         [NotMapped]
-        [Display(Name = "Monto Total")]
+        [Display(Name = "Pago Total")]
         public decimal MontoTotal
         {
             get
             {
                 var fechaFin = (FechaFin.Year == 1) ? DateTime.Today : FechaFin;
                 int cantidadMeses = ((fechaFin.Year - FechaInicio.Year) * 12) + (fechaFin.Month - FechaInicio.Month) + 1;
-                return Math.Round(Monto * cantidadMeses, 2);
+                return Math.Round(Mensualidad * cantidadMeses, 2);
             }
         }
 

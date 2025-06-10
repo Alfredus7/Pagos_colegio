@@ -16,7 +16,7 @@ namespace Pagos_colegio.ViewModel
         public string Estudiante { get; set; }
         public DateTime Fecha { get; set; }
         public string? Periodo { get; set; }
-        public decimal Monto { get; set; }
+        public decimal MontoPagado { get; set; }
     }
 }
 

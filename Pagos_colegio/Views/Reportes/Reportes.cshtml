@@ -3,11 +3,11 @@
 <div class="container py-4">
 
     <div class="card mb-4 shadow">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0"><i class="bi bi-clock-history me-2"></i>Historial de Pagos</h4>
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Pagos del mes</h4>
         </div>
         <div class="card-body table-responsive">
-            @if (Model.Historial.Any())
+            @if (Model.Deuda.Any())
             {
                 <table class="table table-striped">
                     <thead class="table-primary">
@@ -15,7 +15,7 @@
                             <th>Estudiante</th>
                             <th>Fecha</th>
                             <th>Periodo</th>
-                            <th class="text-end">Monto</th>
+                            <th class="text-end">Monto pagado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,32 +24,32 @@
                             <tr>
                                 <td>@p.Estudiante</td>
                                 <td>@p.Fecha.ToShortDateString()</td>
-                                <td>@p.Periodo</td>
-                                <td class="text-end">@p.Monto.ToString("C")</td>
+                                <td>@p.Fecha.ToShortDateString()</td>
+                                <td class="text-end">@p.Periodo</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot>
                         <tr class="fw-bold">
                             <td colspan="3" class="text-end">Total:</td>
-                            <td class="text-end">@Model.Historial.Sum(p => p.Monto).ToString("C")</td>
+                            <td class="text-end">@Model.Historial.Sum(p => p.MontoPagado).ToString("C")</td>
                         </tr>
                     </tfoot>
                 </table>
             }
             else
             {
-                <div class="alert alert-info">No hay pagos registrados.</div>
+                <div class="alert alert-success">No hay pagos registrados este mes.</div>
             }
         </div>
     </div>
 
     <div class="card mb-4 shadow">
-        <div class="card-header bg-success text-white">
-            <h4 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Pagos del Mes</h4>
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Historial pagos</h4>
         </div>
         <div class="card-body table-responsive">
-            @if (Model.PagosDelMes.Any())
+            @if (Model.Deuda.Any())
             {
                 <table class="table table-striped">
                     <thead class="table-success">
@@ -57,7 +57,7 @@
                             <th>Estudiante</th>
                             <th>Fecha</th>
                             <th>Periodo</th>
-                            <th class="text-end">Monto</th>
+                            <th class="text-end">Monto pagado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,21 +67,21 @@
                                 <td>@p.Estudiante</td>
                                 <td>@p.Fecha.ToShortDateString()</td>
                                 <td>@p.Periodo</td>
-                                <td class="text-end">@p.Monto.ToString("C")</td>
+                                <td class="text-end">@p.MontoPagado.ToString("C")</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot>
                         <tr class="fw-bold">
                             <td colspan="3" class="text-end">Total del Mes:</td>
-                            <td class="text-end">@Model.PagosDelMes.Sum(p => p.Monto).ToString("C")</td>
+                            <td class="text-end">@Model.PagosDelMes.Sum(p => p.MontoPagado).ToString("C")</td>
                         </tr>
                     </tfoot>
                 </table>
             }
             else
             {
-                <div class="alert alert-warning">No hay pagos registrados este mes.</div>
+                <div class="alert alert-success">No hay pagos registrados.</div>
             }
         </div>
     </div>
@@ -107,14 +107,14 @@
                             <tr>
                                 <td>@item.estudiante.NombreCompleto</td>
                                 <td>@item.tarifa.Periodo</td>
-                                <td class="text-end">@item.tarifa.Monto.ToString("C")</td>
+                                <td class="text-end">@item.tarifa.Mensualidad.ToString("C")</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot>
                         <tr class="fw-bold">
                             <td colspan="2" class="text-end">Total Deuda:</td>
-                            <td class="text-end">@Model.Deuda.Sum(d => d.tarifa.Monto).ToString("C")</td>
+                            <td class="text-end">@Model.Deuda.Sum(d => d.tarifa.Mensualidad).ToString("C")</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -125,5 +125,4 @@
             }
         </div>
     </div>
-
 </div>

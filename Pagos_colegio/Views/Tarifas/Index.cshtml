@@ -30,7 +30,7 @@
                         <th>@Html.DisplayNameFor(model => model.Gestion)</th>
                         <th>@Html.DisplayNameFor(model => model.FechaInicio)</th>
                         <th>@Html.DisplayName("Fecha Fin")</th>
-                        <th>@Html.DisplayNameFor(model => model.Monto)</th>
+                        <th>@Html.DisplayNameFor(model => model.Mensualidad)</th>
                         <th>@Html.DisplayNameFor(model => model.MontoTotal)</th>
                         <th>Acciones</th>
                     </tr>
@@ -51,7 +51,7 @@
                                     @item.FechaFin.ToString("dd/MM/yyyy")
                                 }
                             </td>
-                            <td>@item.Monto.ToString("C")</td>
+                            <td>@item.Mensualidad.ToString("C")</td>
                             <td>@item.MontoTotal.ToString("C")</td>
                             <td>
                                 <div class="btn-group btn-group-sm">

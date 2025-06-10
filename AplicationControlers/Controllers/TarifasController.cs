@@ -36,7 +36,7 @@ namespace Pagos_colegio.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FechaInicio,FechaFin,Monto")] Tarifa tarifa)
+        public async Task<IActionResult> Create([Bind("FechaInicio,FechaFin,Mensualidad")] Tarifa tarifa)
         {
             // Normalizamos: FechaInicio al inicio del día, FechaFin al final
             tarifa.FechaInicio = tarifa.FechaInicio.Date;
@@ -101,7 +101,7 @@ namespace Pagos_colegio.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TarifaId,Gestion,FechaInicio,FechaFin,Monto")] Tarifa tarifa)
+        public async Task<IActionResult> Edit(int id, [Bind("TarifaId,Gestion,FechaInicio,FechaFin,Mensualidad")] Tarifa tarifa)
         {
             if (id != tarifa.TarifaId)
             {
