@@ -279,3 +279,77 @@ i.bi {
     vertical-align: middle;
     color: var(--accent-color);
 }
+
+/* ───── LOGIN FORM ESTÉTICA ARMÓNICA ───── */
+form#account {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    font-family: 'Comic Neue', cursive;
+}
+
+/* Inputs flotantes */
+.form-floating > input {
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+}
+
+    .form-floating > input::placeholder {
+        color: #888;
+    }
+
+.form-floating > label {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+/* Botón login */
+#login-submit {
+    background-color: var(--accent-color);
+    color: #111;
+    border: none;
+    border-radius: 1rem;
+    font-weight: bold;
+    transition: var(--transition-fast);
+}
+
+    #login-submit:hover {
+        background-color: #3aa8d8;
+    }
+
+/* Checkbox Remember Me */
+.checkbox label {
+    font-family: 'Comic Neue', cursive;
+    color: var(--text-color);
+}
+
+/* Enlace: Forgot Password */
+a#forgot-password {
+    color: var(--warning-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+    a#forgot-password:hover {
+        text-decoration: underline;
+        color: #ffe29a;
+    }
+
+/* Botones externos */
+button[name="provider"] {
+    margin: 0.25rem;
+    border-radius: 1rem;
+    background-color: var(--info-color);
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: var(--transition-fast);
+}
+
+    button[name="provider"]:hover {
+        background-color: #375ab6;
+    }
+

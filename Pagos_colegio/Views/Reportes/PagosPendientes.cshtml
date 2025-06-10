@@ -44,7 +44,7 @@
                                 <tr>
                                     <th>Mes Pendiente</th>
                                     <th>Mensualidad a pagar</th>
-                                    <th>Estado</th>
+                  
                                     @if (esAdmin)
                                     {
                                         <th>Acción</th>
@@ -58,7 +58,6 @@
                                     <tr>
                                         <td>@fechaMes.ToString("MMMM yyyy")</td>
                                         <td>@pendiente.monto.ToString("C")</td>
-                                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
                                         @if (esAdmin)
                                         {
                                             <td>
