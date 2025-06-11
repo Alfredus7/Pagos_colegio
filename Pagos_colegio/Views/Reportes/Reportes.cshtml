@@ -52,6 +52,14 @@
                     {
                         <div class="table-responsive">
                             <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Estudiante</th>
+                                        <th>Fecha</th>
+                                        <th>Periodo</th>
+                                        <th class="text-end">Monto</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     @foreach (var p in Model.PagosDelMes)
                                     {
@@ -87,6 +95,13 @@
                     {
                         <div class="table-responsive">
                             <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Estudiante</th>
+                                        <th>Periodo</th>
+                                        <th class="text-end">Monto</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     @foreach (var d in Model.DeudaMensual.OrderBy(d => d.Periodo))
                                     {
@@ -121,6 +136,14 @@
                     {
                         <div class="table-responsive">
                             <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Estudiante</th>
+                                        <th>Fecha</th>
+                                        <th>Periodo</th>
+                                        <th class="text-end">Monto</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     @foreach (var p in Model.Historial.OrderByDescending(p => p.Fecha))
                                     {
