@@ -9,7 +9,9 @@ using Rotativa.AspNetCore;
 
 namespace Pagos_colegio.Controllers
 {
-   
+    /// <summary>
+    /// Controlador responsable de generar reportes, recibos PDF, historial y deudas para estudiantes.
+    /// </summary>
     public class ReportesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,7 +24,7 @@ namespace Pagos_colegio.Controllers
         }
 
         /// <summary>
-        /// Genera un recibo de pago en formato PDF.
+        /// Genera un recibo de pago en formato PDF usando Rotativa.
         /// </summary>
         [HttpGet]
         [Authorize(Roles = "Familia,Admin")]
@@ -32,7 +34,7 @@ namespace Pagos_colegio.Controllers
                 .Include(p => p.Estudiante)
                     .ThenInclude(e => e.Familia)
                 .Include(p => p.Estudiante)
-                    .ThenInclude(e => e.Tarifa) // <- Esto es lo que faltaba
+                    .ThenInclude(e => e.Tarifa)
                 .FirstOrDefaultAsync(p => p.PagoId == id);
 
             if (pago == null)
@@ -41,7 +43,7 @@ namespace Pagos_colegio.Controllers
             var viewModel = new ReciboViewModel
             {
                 Pago = pago,
-                Periodo = $"{pago.FechaPago:MM/yyyy}"
+                Periodo = pago.FechaPago.ToString("MM/yyyy")
             };
 
             return new ViewAsPdf("Recibo", viewModel)
@@ -52,17 +54,16 @@ namespace Pagos_colegio.Controllers
             };
         }
 
-
-
-
+        /// <summary>
+        /// Muestra los pagos pendientes por periodo para cada estudiante.
+        /// </summary>
         [HttpGet]
-        [Authorize]
         [Authorize(Roles = "Familia,Admin")]
         public async Task<IActionResult> PagosPendientes(int? estudianteId = null)
         {
             var pagosPendientes = new List<(Estudiante estudiante, string periodo, decimal monto)>();
             var hoy = DateTime.Today;
-            var primerDiaDelMesActual = new DateTime(hoy.Year, hoy.Month, 1);
+            var primerDiaMes = new DateTime(hoy.Year, hoy.Month, 1);
 
             List<Estudiante> estudiantes = new();
 
@@ -74,11 +75,7 @@ namespace Pagos_colegio.Controllers
                     .ToListAsync();
 
                 if (estudianteId.HasValue)
-                {
-                    estudiantes = estudiantes
-                        .Where(e => e.EstudianteId == estudianteId.Value)
-                        .ToList();
-                }
+                    estudiantes = estudiantes.Where(e => e.EstudianteId == estudianteId.Value).ToList();
             }
             else if (User.IsInRole("Familia"))
             {
@@ -93,9 +90,7 @@ namespace Pagos_colegio.Controllers
                 if (familia == null)
                     return NotFound("No se encontró una familia asociada.");
 
-                estudiantes = familia.Estudiantes
-                    .Where(e => e.Tarifa != null)
-                    .ToList();
+                estudiantes = familia.Estudiantes.Where(e => e.Tarifa != null).ToList();
             }
 
             foreach (var estudiante in estudiantes)
@@ -103,37 +98,32 @@ namespace Pagos_colegio.Controllers
                 var tarifa = estudiante.Tarifa;
                 if (tarifa == null) continue;
 
-                // Aseguramos que pagos estén bien cargados
                 var pagos = estudiante.Pagos ?? new List<Pago>();
+                var inicio = MaxDate(
+                    new DateTime(estudiante.FechaInscripcion.Year, estudiante.FechaInscripcion.Month, 1),
+                    new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1));
 
-                var fechaInicio = new DateTime(estudiante.FechaInscripcion.Year, estudiante.FechaInscripcion.Month, 1);
-                var fechaTarifaInicio = new DateTime(tarifa.FechaInicio.Year, tarifa.FechaInicio.Month, 1);
-                var fecha = (fechaInicio > fechaTarifaInicio) ? fechaInicio : fechaTarifaInicio;
-                var fechaFin = primerDiaDelMesActual;
+                var fin = MinDate(
+                    primerDiaMes,
+                    new DateTime(tarifa.FechaFin.Year, tarifa.FechaFin.Month, 1));
 
-                while (fecha <= fechaFin)
+                while (inicio <= fin)
                 {
-                    var periodo = fecha.ToString("MM/yyyy");
-
-                    bool yaPagado = pagos.Any(p => p.Periodo == periodo);
-
-                    if (!yaPagado)
+                    var periodo = inicio.ToString("MM/yyyy");
+                    if (!pagos.Any(p => p.Periodo == periodo))
                     {
-                        var TotalPagar = Math.Round(tarifa.Mensualidad * (1 - ((decimal)estudiante.Descuento / 100)), 2);
-                        pagosPendientes.Add((estudiante, periodo, TotalPagar));
+                        var total = Math.Round(tarifa.Mensualidad * (1 - ((decimal)estudiante.Descuento / 100)), 2);
+                        pagosPendientes.Add((estudiante, periodo, total));
                     }
-
-                    fecha = fecha.AddMonths(1);
+                    inicio = inicio.AddMonths(1);
                 }
             }
 
             return View(pagosPendientes);
         }
 
-
-
         /// <summary>
-        /// Muestra el historial de pagos para un estudiante específico.
+        /// Muestra el historial de pagos de un estudiante específico.
         /// </summary>
         [HttpGet]
         [Authorize(Roles = "Familia,Admin")]
@@ -149,16 +139,12 @@ namespace Pagos_colegio.Controllers
 
             if (estudiante == null) return NotFound();
 
-            estudiante.Pagos = estudiante.Pagos
-                .OrderByDescending(p => p.FechaPago)
-                .ToList();
-
+            estudiante.Pagos = estudiante.Pagos.OrderByDescending(p => p.FechaPago).ToList();
             return View(estudiante);
         }
 
         /// <summary>
-        /// Muestra un resumen de reportes para la familia actual:
-        /// historial completo, pagos del mes y deudas.
+        /// Muestra un resumen para la familia actual: historial, pagos del mes y deudas pendientes.
         /// </summary>
         [HttpGet]
         [Authorize(Roles = "Familia")]
@@ -179,7 +165,6 @@ namespace Pagos_colegio.Controllers
             var estudiantes = familia.Estudiantes;
             var now = DateTime.Now;
 
-            // Historial completo
             var historialPagos = estudiantes
                 .SelectMany(e => e.Pagos.Select(p => new HistorialPagoItem
                 {
@@ -191,30 +176,55 @@ namespace Pagos_colegio.Controllers
                 .OrderBy(p => p.Fecha)
                 .ToList();
 
-            // Pagos del mes actual
             var pagosMes = historialPagos
                 .Where(p => p.Fecha.Month == now.Month && p.Fecha.Year == now.Year)
                 .ToList();
 
-            // Deudas: tarifas vencidas no pagadas
-            var deuda = estudiantes
-                .Where(e =>
-                    e.Tarifa != null &&
-                    e.Tarifa.FechaFin < now &&
-                    !e.Pagos.Any(p => p.FechaPago >= e.Tarifa.FechaInicio && p.FechaPago <= e.Tarifa.FechaFin))
-                .Select(e => (e, e.Tarifa!))
-                .ToList();
+            var deudas = new List<DeudaMensualItem>();
+
+            foreach (var estudiante in estudiantes)
+            {
+                if (estudiante.Tarifa == null) continue;
+
+                var pagos = estudiante.Pagos ?? new List<Pago>();
+                var inicio = MaxDate(
+                    new DateTime(estudiante.FechaInscripcion.Year, estudiante.FechaInscripcion.Month, 1),
+                    new DateTime(estudiante.Tarifa.FechaInicio.Year, estudiante.Tarifa.FechaInicio.Month, 1));
+
+                var fin = new DateTime(estudiante.Tarifa.FechaFin.Year, estudiante.Tarifa.FechaFin.Month, 1);
+
+                while (inicio <= fin)
+                {
+                    var periodo = inicio.ToString("MM/yyyy");
+                    if (!pagos.Any(p => p.Periodo == periodo))
+                    {
+                        var monto = Math.Round(estudiante.Tarifa.Mensualidad * (1 - ((decimal)estudiante.Descuento / 100)), 2);
+                        deudas.Add(new DeudaMensualItem
+                        {
+                            Estudiante = estudiante.NombreCompleto,
+                            Periodo = periodo,
+                            Monto = monto
+                        });
+                    }
+                    inicio = inicio.AddMonths(1);
+                }
+            }
 
             var modelo = new ReporteViewModel
             {
                 Historial = historialPagos,
                 PagosDelMes = pagosMes,
-                Deuda = deuda
+                DeudaMensual = deudas
             };
 
             return View(modelo);
         }
 
+        // 🔧 Utilidades privadas
+
+        private static DateTime MaxDate(DateTime a, DateTime b) => (a > b) ? a : b;
+        private static DateTime MinDate(DateTime a, DateTime b) => (a < b) ? a : b;
     }
 }
+
 

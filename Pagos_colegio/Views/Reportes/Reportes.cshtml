@@ -2,57 +2,16 @@
 
 <div class="container py-4">
 
+    <!-- 🔴 Pagos del mes -->
     <div class="card mb-4 shadow">
-        <div class="card-header bg-danger text-white">
-            <h4 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Pagos del mes</h4>
+        <div class="card-header ">
+            <h4 class="mb-0"><i class="bi bi-cash me-2"></i>Pagos del mes</h4>
         </div>
         <div class="card-body table-responsive">
-            @if (Model.Deuda.Any())
+            @if (Model.PagosDelMes.Any())
             {
                 <table class="table table-striped">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Fecha</th>
-                            <th>Periodo</th>
-                            <th class="text-end">Monto pagado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var p in Model.Historial)
-                        {
-                            <tr>
-                                <td>@p.Estudiante</td>
-                                <td>@p.Fecha.ToShortDateString()</td>
-                                <td>@p.Fecha.ToShortDateString()</td>
-                                <td class="text-end">@p.Periodo</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr class="fw-bold">
-                            <td colspan="3" class="text-end">Total:</td>
-                            <td class="text-end">@Model.Historial.Sum(p => p.MontoPagado).ToString("C")</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            }
-            else
-            {
-                <div class="alert alert-info">No hay pagos registrados este mes.</div>
-            }
-        </div>
-    </div>
-
-    <div class="card mb-4 shadow">
-        <div class="card-header bg-danger text-white">
-            <h4 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Historial pagos</h4>
-        </div>
-        <div class="card-body table-responsive">
-            @if (Model.Deuda.Any())
-            {
-                <table class="table table-striped">
-                    <thead class="table-success">
+                    <thead>
                         <tr>
                             <th>Estudiante</th>
                             <th>Fecha</th>
@@ -81,48 +40,93 @@
             }
             else
             {
-                <div class="alert alert-info">No hay pagos registrados.</div>
+                <div class="alert alert-info">No hay pagos registrados este mes.</div>
             }
         </div>
     </div>
 
+    <!-- 🟢 Historial completo -->
     <div class="card mb-4 shadow">
-        <div class="card-header bg-danger text-white">
-            <h4 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Deudas Pendientes</h4>
+        <div class="card-header ">
+            <h4 class="mb-0"><i class="bi bi-journal-text me-2"></i>Historial de Pagos</h4>
         </div>
         <div class="card-body table-responsive">
-            @if (Model.Deuda.Any())
+            @if (Model.Historial.Any())
             {
                 <table class="table table-striped">
-                    <thead class="table-danger">
+                    <thead >
                         <tr>
                             <th>Estudiante</th>
+                            <th>Fecha</th>
                             <th>Periodo</th>
-                            <th class="text-end">Monto</th>
+                            <th class="text-end">Mensualidad pagado</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Deuda)
+                        @foreach (var p in Model.Historial)
                         {
                             <tr>
-                                <td>@item.estudiante.NombreCompleto</td>
-                                <td>@item.tarifa.Periodo</td>
-                                <td class="text-end">@item.tarifa.Mensualidad.ToString("C")</td>
+                                <td>@p.Estudiante</td>
+                                <td>@p.Fecha.ToShortDateString()</td>
+                                <td>@p.Periodo</td>
+                                <td class="text-end">@p.MontoPagado.ToString("C")</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot>
                         <tr class="fw-bold">
-                            <td colspan="2" class="text-end">Total Deuda:</td>
-                            <td class="text-end">@Model.Deuda.Sum(d => d.tarifa.Mensualidad).ToString("C")</td>
+                            <td colspan="3" class="text-end">Total:</td>
+                            <td class="text-end">@Model.Historial.Sum(p => p.MontoPagado).ToString("C")</td>
                         </tr>
                     </tfoot>
                 </table>
             }
             else
             {
-                <div class="alert alert-success">No hay deudas pendientes.</div>
+                <div class="alert alert-info">No hay historial de pagos.</div>
             }
         </div>
     </div>
+
+    <!-- ⚠️ Deudas pendientes por mes -->
+    <div class="card mb-4 shadow">
+        <div class="card-header ">
+            <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Deudas Pendientes</h4>
+        </div>
+        <div class="card-body table-responsive">
+            @if (Model.DeudaMensual.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Periodo</th>
+                            <th class="text-end">Mensualidad pendiente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model.DeudaMensual)
+                        {
+                            <tr>
+                                <td>@d.Estudiante</td>
+                                <td>@d.Periodo</td>
+                                <td class="text-end">@d.Monto.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold">
+                            <td colspan="2" class="text-end">Total Deuda:</td>
+                            <td class="text-end">@Model.DeudaMensual.Sum(d => d.Monto).ToString("C")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-success">No hay deudas pendientes. ¡Yay~! ヽ(＾Д＾)ﾉ</div>
+            }
+        </div>
+    </div>
+
 </div>
