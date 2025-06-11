@@ -170,7 +170,7 @@ namespace Pagos_colegio.Controllers
                 {
                     Estudiante = e.NombreCompleto,
                     Fecha = p.FechaPago,
-                    Periodo = p.FechaPago.ToString("MM/yyyy"),
+                    Periodo = p.Periodo,
                     MontoPagado = p.TotalPago
                 }))
                 .OrderBy(p => p.Fecha)
