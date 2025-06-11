@@ -107,27 +107,80 @@ namespace Pagos_colegio.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("EstudianteId,Nombre,FamiliaId,FechaInscripcion,TarifaId,Descuento")] Estudiante estudiante)
         {
             if (id != estudiante.EstudianteId) return NotFound();
 
+            // Obtener el estudiante actual de la base de datos
+            var estudianteActual = await _context.Estudiantes
+                .Include(e => e.Pagos)
+                .Include(e => e.Tarifa)
+                .FirstOrDefaultAsync(e => e.EstudianteId == id);
+
+            if (estudianteActual == null) return NotFound();
+
+            // Verificar si se está cambiando la tarifa y si tiene pagos pendientes
+            if (estudianteActual.TarifaId != estudiante.TarifaId)
+            {
+                var hoy = DateTime.Today;
+                var primerDiaMes = new DateTime(hoy.Year, hoy.Month, 1);
+                var tarifaActual = estudianteActual.Tarifa;
+
+                if (tarifaActual != null)
+                {
+                    var inicio = MaxDate(
+                        new DateTime(estudianteActual.FechaInscripcion.Year, estudianteActual.FechaInscripcion.Month, 1),
+                        new DateTime(tarifaActual.FechaInicio.Year, tarifaActual.FechaInicio.Month, 1));
+
+                    var fin = MinDate(
+                        primerDiaMes,
+                        new DateTime(tarifaActual.FechaFin.Year, tarifaActual.FechaFin.Month, 1));
+
+                    // Verificar pagos pendientes
+                    while (inicio <= fin)
+                    {
+                        var periodo = inicio.ToString("MM/yyyy");
+                        if (!estudianteActual.Pagos.Any(p => p.Periodo == periodo))
+                        {
+                            ModelState.AddModelError("TarifaId", "No se puede cambiar la tarifa porque el estudiante tiene pagos pendientes.");
+                            break;
+                        }
+                        inicio = inicio.AddMonths(1);
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(estudiante);
+                    // Actualizar solo los campos permitidos
+                    estudianteActual.Nombre = estudiante.Nombre;
+                    estudianteActual.FamiliaId = estudiante.FamiliaId;
+                    estudianteActual.FechaInscripcion = estudiante.FechaInscripcion;
+                    estudianteActual.Descuento = estudiante.Descuento;
+
+                    // Solo actualizar TarifaId si no hay pagos pendientes
+                    if (!ModelState.ContainsKey("TarifaId"))
+                    {
+                        estudianteActual.TarifaId = estudiante.TarifaId;
+                    }
+
+                    _context.Update(estudianteActual);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!EstudianteExists(estudiante.EstudianteId)) return NotFound();
                     else throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
 
+            // Cargar datos para el dropdown
             var familias = await _context.Familias.Include(f => f.Usuario).ToListAsync();
             var tarifas = await _context.Tarifas.ToListAsync();
             ViewBag.FamiliaId = new SelectList(familias, "FamiliaId", "NombreUsuario", estudiante.FamiliaId);
@@ -135,6 +188,10 @@ namespace Pagos_colegio.Controllers
 
             return View(estudiante);
         }
+
+        // Métodos auxiliares (deberían estar en algún helper)
+        private DateTime MaxDate(DateTime date1, DateTime date2) => date1 > date2 ? date1 : date2;
+        private DateTime MinDate(DateTime date1, DateTime date2) => date1 < date2 ? date1 : date2;
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)

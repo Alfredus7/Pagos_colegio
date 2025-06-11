@@ -1,132 +1,146 @@
 ﻿@model Pagos_colegio.ViewModel.ReporteViewModel
 
 <div class="container py-4">
-
-    <!-- 🔴 Pagos del mes -->
-    <div class="card mb-4 shadow">
-        <div class="card-header ">
-            <h4 class="mb-0"><i class="bi bi-cash me-2"></i>Pagos del mes</h4>
+    <!-- Tarjetas resumen -->
+    <div class="row mb-4">
+        <!-- Total pagado este mes -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Pagado (Mes)</h5>
+                    <h3 class="fw-bold">@Model.PagosDelMes.Sum(p => p.MontoPagado).ToString("C")</h3>
+                    <small>@Model.PagosDelMes.Count pagos registrados</small>
+                </div>
+            </div>
         </div>
-        <div class="card-body table-responsive">
-            @if (Model.PagosDelMes.Any())
-            {
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Fecha</th>
-                            <th>Periodo</th>
-                            <th class="text-end">Monto pagado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var p in Model.PagosDelMes)
-                        {
-                            <tr>
-                                <td>@p.Estudiante</td>
-                                <td>@p.Fecha.ToShortDateString()</td>
-                                <td>@p.Periodo</td>
-                                <td class="text-end">@p.MontoPagado.ToString("C")</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr class="fw-bold">
-                            <td colspan="3" class="text-end">Total del Mes:</td>
-                            <td class="text-end">@Model.PagosDelMes.Sum(p => p.MontoPagado).ToString("C")</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            }
-            else
-            {
-                <div class="alert alert-info">No hay pagos registrados este mes.</div>
-            }
+
+        <!-- Deuda pendiente -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Deuda Pendiente</h5>
+                    <h3 class="fw-bold">@Model.DeudaMensual.Sum(d => d.Monto).ToString("C")</h3>
+                    <small>@Model.DeudaMensual.Count periodos pendientes</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total histórico -->
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Pagado</h5>
+                    <h3 class="fw-bold">@Model.Historial.Sum(p => p.MontoPagado).ToString("C")</h3>
+                    <small>@Model.Historial.Count pagos históricos</small>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- 🟢 Historial completo -->
-    <div class="card mb-4 shadow">
-        <div class="card-header ">
-            <h4 class="mb-0"><i class="bi bi-journal-text me-2"></i>Historial de Pagos</h4>
+    <!-- Acordeón para detalles -->
+    <div class="accordion" id="reporteAccordion">
+        <!-- Pagos del mes -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePagosMes">
+                    <i class="bi bi-cash me-2"></i> Pagos del Mes (@Model.PagosDelMes.Count)
+                </button>
+            </h2>
+            <div id="collapsePagosMes" class="accordion-collapse collapse show" data-bs-parent="#reporteAccordion">
+                <div class="accordion-body">
+                    @if (Model.PagosDelMes.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    @foreach (var p in Model.PagosDelMes)
+                                    {
+                                        <tr>
+                                            <td>@p.Estudiante</td>
+                                            <td>@p.Fecha.ToString("dd/MM")</td>
+                                            <td>@p.Periodo</td>
+                                            <td class="text-end">@p.MontoPagado.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">No hay pagos este mes</div>
+                    }
+                </div>
+            </div>
         </div>
-        <div class="card-body table-responsive">
-            @if (Model.Historial.Any())
-            {
-                <table class="table table-striped">
-                    <thead >
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Fecha</th>
-                            <th>Periodo</th>
-                            <th class="text-end">Mensualidad pagado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var p in Model.Historial)
-                        {
-                            <tr>
-                                <td>@p.Estudiante</td>
-                                <td>@p.Fecha.ToShortDateString()</td>
-                                <td>@p.Periodo</td>
-                                <td class="text-end">@p.MontoPagado.ToString("C")</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr class="fw-bold">
-                            <td colspan="3" class="text-end">Total:</td>
-                            <td class="text-end">@Model.Historial.Sum(p => p.MontoPagado).ToString("C")</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            }
-            else
-            {
-                <div class="alert alert-info">No hay historial de pagos.</div>
-            }
+
+        <!-- Deudas pendientes -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDeudas">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Deudas Pendientes (@Model.DeudaMensual.Count)
+                </button>
+            </h2>
+            <div id="collapseDeudas" class="accordion-collapse collapse" data-bs-parent="#reporteAccordion">
+                <div class="accordion-body">
+                    @if (Model.DeudaMensual.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    @foreach (var d in Model.DeudaMensual.OrderBy(d => d.Periodo))
+                                    {
+                                        <tr>
+                                            <td>@d.Estudiante</td>
+                                            <td>@d.Periodo</td>
+                                            <td class="text-end">@d.Monto.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success mb-0">¡No hay deudas pendientes!</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial completo -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHistorial">
+                    <i class="bi bi-journal-text me-2"></i> Historial Completo (@Model.Historial.Count)
+                </button>
+            </h2>
+            <div id="collapseHistorial" class="accordion-collapse collapse" data-bs-parent="#reporteAccordion">
+                <div class="accordion-body">
+                    @if (Model.Historial.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    @foreach (var p in Model.Historial.OrderByDescending(p => p.Fecha))
+                                    {
+                                        <tr>
+                                            <td>@p.Estudiante</td>
+                                            <td>@p.Fecha.ToString("dd/MM/yyyy")</td>
+                                            <td>@p.Periodo</td>
+                                            <td class="text-end">@p.MontoPagado.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">No hay historial de pagos</div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- ⚠️ Deudas pendientes por mes -->
-    <div class="card mb-4 shadow">
-        <div class="card-header ">
-            <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Deudas Pendientes</h4>
-        </div>
-        <div class="card-body table-responsive">
-            @if (Model.DeudaMensual.Any())
-            {
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Periodo</th>
-                            <th class="text-end">Mensualidad pendiente</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var d in Model.DeudaMensual)
-                        {
-                            <tr>
-                                <td>@d.Estudiante</td>
-                                <td>@d.Periodo</td>
-                                <td class="text-end">@d.Monto.ToString("C")</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr class="fw-bold">
-                            <td colspan="2" class="text-end">Total Deuda:</td>
-                            <td class="text-end">@Model.DeudaMensual.Sum(d => d.Monto).ToString("C")</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            }
-            else
-            {
-                <div class="alert alert-success">No hay deudas pendientes. ¡Yay~! ヽ(＾Д＾)ﾉ</div>
-            }
-        </div>
-    </div>
-
 </div>

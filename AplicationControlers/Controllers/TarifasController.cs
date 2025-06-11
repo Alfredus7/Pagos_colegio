@@ -110,11 +110,40 @@ namespace Pagos_colegio.Controllers
 
             if (ModelState.IsValid)
             {
+                // Normalizamos: FechaInicio al inicio del día, FechaFin al final
+                tarifa.FechaInicio = tarifa.FechaInicio.Date;
+                tarifa.FechaFin = tarifa.FechaFin.Date;
+
+                // Validación de fechas
+                if (tarifa.FechaFin <= tarifa.FechaInicio)
+                {
+                    ModelState.AddModelError(string.Empty, "La fecha de fin debe ser posterior a la fecha de inicio.");
+                    return View(tarifa);
+                }
+
+                // Validar solapamientos: inicio o fin dentro de alguna gestión existente
+                bool solapa = await _context.Tarifas.AnyAsync(t =>
+                    (tarifa.FechaInicio <= t.FechaFin && tarifa.FechaFin >= t.FechaInicio));
+
+                if (solapa)
+                {
+                    ModelState.AddModelError(string.Empty, "Ya existe una tarifa entre ese rango de fechas ingresado.");
+                    return View(tarifa);
+                }
+
+
+                // Asignar nombre automático a la gestión
+                string nombreMesInicio = tarifa.FechaInicio.ToString("MMM");
+                string nombreMesFin = tarifa.FechaFin.ToString("MMM");
+                int anio = tarifa.FechaInicio.Year;
+                tarifa.Gestion = $"Gestión {anio} ({nombreMesInicio} - {nombreMesFin})";
+
                 try
                 {
                     _context.Update(tarifa);
                     await _context.SaveChangesAsync();
                 }
+
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!TarifaExists(tarifa.TarifaId))

@@ -7,16 +7,18 @@
         .Select(g => new
         {
             Estudiante = g.Key,
-            Pendientes = g.Select(x => new { x.periodo, x.monto }).ToList()
+            Pendientes = g.Select(x => new { x.periodo, x.monto }).ToList(),
+            Total = g.Sum(x => x.monto)  // Calcula el total por estudiante
         })
         .ToList();
 
+    var totalGeneral = agrupadoPorEstudiante.Sum(g => g.Total);  // Calcula el total general
     bool esAdmin = User.IsInRole("Admin");
 }
 
 <div class="container py-4">
     <h2 class="mb-4 text-primary">
-        <i class="bi bi-exclamation-circle"></i> @ViewData["Title"]  
+        <i class="bi bi-exclamation-circle"></i> @ViewData["Title"]
     </h2>
 
     @if (!Model.Any())
@@ -35,9 +37,14 @@
                         <strong>@grupo.Estudiante.NombreCompleto</strong><br />
                         <small>Fecha de inscripción: @grupo.Estudiante.FechaInscripcion.ToString("MMMM yyyy")</small>
                     </div>
-                    <span class="badge bg-warning text-dark fs-6">
-                        @grupo.Pendientes.Count pendiente(s)
-                    </span>
+                    <div class="text-end">
+                        <span class="badge bg-warning text-dark fs-6">
+                            @grupo.Pendientes.Count pendiente(s)
+                        </span>
+                        <div class="mt-1">
+                            <strong>Total adeudado: @grupo.Total.ToString("C")</strong>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -46,7 +53,6 @@
                                 <tr>
                                     <th>Mes Pendiente</th>
                                     <th>Mensualidad a pagar</th>
-                  
                                     @if (esAdmin)
                                     {
                                         <th>Acción</th>
@@ -75,10 +81,40 @@
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr class="table-active">
+                                    <td><strong>Total:</strong></td>
+                                    <td><strong>@grupo.Total.ToString("C")</strong></td>
+                                    @if (esAdmin)
+                                    {
+                                        <td></td>
+                                    }
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
         }
+
+        <!-- Total general para todos los estudiantes -->
+        <div class="card border-primary mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calculator"></i> Resumen Total
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Total de estudiantes con deuda: @agrupadoPorEstudiante.Count</h5>
+                        <h5>Total de meses pendientes: @Model.Count</h5>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <h3 class="text-danger">Deuda total acumulada: @totalGeneral.ToString("C")</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>

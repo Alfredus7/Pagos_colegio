@@ -13,11 +13,7 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="TarifaId" />
-            <div class="form-group">
-                <label asp-for="Gestion" class="control-label"></label>
-                <input asp-for="Gestion" class="form-control" />
-                <span asp-validation-for="Gestion" class="text-danger"></span>
-            </div>
+           
             <div class="form-group">
                 <label asp-for="FechaInicio" class="control-label"></label>
                 <input asp-for="FechaInicio" class="form-control" />

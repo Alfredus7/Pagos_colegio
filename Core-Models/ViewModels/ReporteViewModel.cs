@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Pagos_colegio.Models;
-
-namespace Pagos_colegio.ViewModel
+﻿namespace Pagos_colegio.ViewModel
 {
     public class ReporteViewModel
     {
@@ -29,4 +25,3 @@ namespace Pagos_colegio.ViewModel
         public decimal Monto { get; set; }
     }
 }
-

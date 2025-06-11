@@ -14,47 +14,57 @@
         }
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.NombreCompleto)</th>
-                    @if (esAdmin)
-                    {
-                        <th>@Html.DisplayNameFor(model => model.Familia)</th>
-                    }
-                    <th>@Html.DisplayNameFor(model => model.FechaInscripcion)</th>
-                    <th>@Html.DisplayNameFor(model => model.Descuento)</th>
-                    <th>@Html.DisplayNameFor(model => model.Tarifa)</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+             No hay estudiantes registrados todavía.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
                     <tr>
-                        <td>@item.NombreCompleto</td>
+                        <th>@Html.DisplayNameFor(model => model.NombreCompleto)</th>
                         @if (esAdmin)
                         {
-                            <td>@item.Familia.NombreUsuario</td>
+                            <th>@Html.DisplayNameFor(model => model.Familia)</th>
                         }
-                        <td>@item.FechaInscripcion.ToString("dd/MM/yyyy")</td>
-                        <td>@((item.Descuento / 100.0m).ToString("P0"))</td>
-                        <td>@item.Tarifa?.Gestion</td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                @if (esAdmin)
-                                {
-                                    <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.EstudianteId">✏️ Editar</a>
-                                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.EstudianteId">🗑️ Eliminar</a>
-                                }
-                                <a class="btn btn-outline-success" asp-controller="Reportes" asp-action="HistorialPagos" asp-route-id="@item.EstudianteId">📄 Historial</a>
-                            </div>
-                        </td>
+                        <th>@Html.DisplayNameFor(model => model.FechaInscripcion)</th>
+                        <th>@Html.DisplayNameFor(model => model.Descuento)</th>
+                        <th>@Html.DisplayNameFor(model => model.Tarifa)</th>
+                        <th>Acciones</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.NombreCompleto</td>
+                            @if (esAdmin)
+                            {
+                                <td>@item.Familia.NombreUsuario</td>
+                            }
+                            <td>@item.FechaInscripcion.ToString("dd/MM/yyyy")</td>
+                            <td>@((item.Descuento / 100.0m).ToString("P0"))</td>
+                            <td>@item.Tarifa?.Gestion</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    @if (esAdmin)
+                                    {
+                                        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.EstudianteId">✏️ Editar</a>
+                                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.EstudianteId">🗑️ Eliminar</a>
+                                    }
+                                    <a class="btn btn-outline-success" asp-controller="Reportes" asp-action="HistorialPagos" asp-route-id="@item.EstudianteId">📄 Historial</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+       
 </div>
 
