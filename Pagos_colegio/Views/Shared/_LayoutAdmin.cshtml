@@ -16,12 +16,12 @@
 
 
 
-<body class="bg-dark text-light" style="background-color: var(--primary-bg); color: var(--text-color); font-family: 'Comic Neue', cursive;">
+<body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3" style="background-color: var(--header-bg);">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-cash-coin"></i> Pagos Colegio
+                    <i class="bi bi-cash-coin bi"></i> Pagos Colegio
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -35,25 +35,25 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-gear"></i> Gestión
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown" style="background-color: var(--secondary-bg);">
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <a class="dropdown-item text-light" asp-controller="Familias" asp-action="Index">
+                                    <a class="dropdown-item" asp-controller="Familias" asp-action="Index">
                                         <i class="bi bi-people"></i> Familias
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item text-light" asp-controller="Estudiantes" asp-action="Index">
+                                    <a class="dropdown-item" asp-controller="Estudiantes" asp-action="Index">
                                         <i class="bi bi-mortarboard"></i> Estudiantes
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item text-light" asp-controller="Tarifas" asp-action="Index">
+                                    <a class="dropdown-item" asp-controller="Tarifas" asp-action="Index">
                                         <i class="bi bi-tag"></i> Tarifas
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider" style="border-color: #4d4d4d;"></li>
                                 <li>
-                                    <a class="dropdown-item text-light" asp-controller="Pagos" asp-action="Index">
+                                    <a class="dropdown-item" asp-controller="Pagos" asp-action="Index">
                                         <i class="bi bi-cash-stack"></i> Pagos
                                     </a>
                                 </li>
@@ -71,7 +71,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -79,7 +79,7 @@
 
     <footer class="border-top footer text-muted"">
         <div class="container">
-            &copy; 2025 - Sistema de Pagos Colegio -
+            © 2025 Unidad Educativa Santa María Fe y Alegría. Todos los derechos reservados.
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -17,7 +17,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 </head>
 
+<style>
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        max-width: 100%;
+    }
 
+        .logo img {
+            height: 50px;
+            max-width: 100%;
+        }
+
+    .logo-text {
+        font-size: 18px;
+        color: black;
+        white-space: nowrap;
+    }
+
+        .logo-text span {
+            color: #fd1313;
+            font-weight: bold;
+        }
+</style>
 
 <body>
     <header>
@@ -54,16 +77,24 @@
                 </div>
             </div>
         </nav>
+        <section class="logo-bar">
+            <div class="logo">
+                <img src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/300956288_411009054463258_1929620750288347284_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=m9q719wMKjwQ7kNvwFsCeUB&_nc_oc=AdksbQwaavL-H1ZriLtiCY2cJ4ivx2QdyPtNHDA6tTNOlvgWRnTXhKp-AluEjzyVw4t5GyftlCIgdi0GkGd_LGfM&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=pLx9eMQlLLOkyEhhX5MQ_w&oh=00_AfP5uzLG7IM9JqECfYMcV9yoPpPpA7yfrP_gcWAzqH_Flg&oe=68504CFB" alt="Logo">
+                <div class="logo-text">
+                    UNIDAD EDUCATIVA<br>  <span>SANTA MARIA FE Y ALEGRIA</span>
+                </div>
+            </div>
+        </section>
     </header>
-    <div class="container">
-        <main role="main">
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
     <footer class="footer">
         <div class="container text-center">
-            &copy; 2025 - Sistema de Pagos Escolares -
+            © 2025 Unidad Educativa Santa María Fe y Alegría. Todos los derechos reservados.
         </div>
     </footer>
 

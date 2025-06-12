@@ -17,7 +17,7 @@
 }
 
 <div class="container py-4">
-    <h2 class="mb-4 text-primary">
+    <h2 class="mb-4">
         <i class="bi bi-exclamation-circle"></i> @ViewData["Title"]
     </h2>
 
@@ -32,9 +32,9 @@
         @foreach (var grupo in agrupadoPorEstudiante)
         {
             <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <strong>@grupo.Estudiante.NombreCompleto</strong><br />
+                        <strong class="text-light">@grupo.Estudiante.NombreCompleto</strong><br />
                         <small>Fecha de inscripción: @grupo.Estudiante.FechaInscripcion.ToString("MMMM yyyy")</small>
                     </div>
                     <div class="text-end">
@@ -42,7 +42,7 @@
                             @grupo.Pendientes.Count pendiente(s)
                         </span>
                         <div class="mt-1">
-                            <strong>Total adeudado: @grupo.Total.ToString("C")</strong>
+                            <strong class="text-light">Total adeudado: @grupo.Total.ToString("C")</strong>
                         </div>
                     </div>
                 </div>
@@ -69,12 +69,12 @@
                                         @if (esAdmin)
                                         {
                                             <td>
-                                                <a class="btn btn-sm btn-success"
+                                                <a class="btn btn-sm btn-outline-success"
                                                    asp-controller="Pagos"
                                                    asp-action="Create"
                                                    asp-route-estudianteId="@grupo.Estudiante.EstudianteId"
                                                    asp-route-periodo="@pendiente.periodo">
-                                                    <i class="bi bi-cash-coin"></i> Pagar
+                                                    💵 Pagar
                                                 </a>
                                             </td>
                                         }
@@ -98,8 +98,8 @@
         }
 
         <!-- Total general para todos los estudiantes -->
-        <div class="card border-primary mb-4">
-            <div class="card-header bg-primary text-white">
+        <div class="card mb-4">
+            <div class="card-header bg-primary ">
                 <h5 class="mb-0">
                     <i class="bi bi-calculator"></i> Resumen Total
                 </h5>
@@ -111,7 +111,7 @@
                         <h5>Total de meses pendientes: @Model.Count</h5>
                     </div>
                     <div class="col-md-6 text-end">
-                        <h3 class="text-danger">Deuda total acumulada: @totalGeneral.ToString("C")</h3>
+                        <h3 >Deuda total acumulada: @totalGeneral.ToString("C")</h3>
                     </div>
                 </div>
             </div>

@@ -1,18 +1,18 @@
 :root {
-    --primary-bg: #1a1a2e;
-    --secondary-bg: #16213e;
-    --accent-color: #4cc9f0;
-    --text-color: #e6f7ff;
-    --header-bg: #0f3460;
-    --card-bg: #1f2a4a;
-    --warning-color: #ffd166;
-    --success-color: #006d75;
-    --info-color: #1e3a8a;
-    --border-color: #2c3e50;
-    --border-radius: 10px;
-    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 .25rem .75rem rgba(0, 0, 0, .2);
+    --primary-bg: #1e0a1e; /* Fondo principal púrpura oscuro */
+    --secondary-bg: #2d0a1a; /* Fondo secundario rojo oscuro */
+    --accent-color: #ff5555; /* Color de acento rojo brillante */
+    --text-color: #f8f8f2; /* Texto claro */
+    --header-bg: #3a0a1a; /* Encabezado rojo más intenso */
+    --card-bg: #2d0a1a; /* Fondo de tarjetas */
+    --warning-color: #ffb86c; /* Amarillo anaranjado */
+    --success-color: #50fa7b; /* Verde brillante */
+    --info-color: #8be9fd; /* Azul claro */
+    --border-color: #44475a; /* Borde gris azulado */
+    --border-radius: 8px;
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 .25rem .75rem rgba(0, 0, 0, .4);
     --transition-fast: all 0.2s ease-in-out;
     --transition-normal: all 0.3s ease;
 }

@@ -2,7 +2,112 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<style>
+    /* ============================================= */
+    /*           Home                                */
+    /* ============================================= */
+
+
+    .login-link {
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    .logo-bar {
+        background: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .logo img {
+            height: 50px;
+        }
+
+    .logo-text {
+        color: black;
+        font-size: 18px;
+    }
+
+        .logo-text span {
+            color: #fd1313;
+            font-weight: bold;
+        }
+
+    .banner {
+        background-image: url('https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/505236380_2708860075991229_9094338492113779396_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=qogoPi98wHYQ7kNvwE1s-UT&_nc_oc=AdlpkQv27T2FZMME3Hp6mBDB_cF9Dus19lbthEbYp-k3S-dMyLpMKiUm9r56fDFepQsiSbzXaGzuyzRxSqXMxoYv&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=aGERSR_Qs35QWp5K-Dxy7g&oh=00_AfNwS-vT7EhgBx1ipHjjUcIk4b5FMijwu-aDtRbRXjOmzQ&oe=68504CF1');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        text-align: center;
+        color: white;
+    }
+
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+    .banner-content {
+        z-index: 1;
+        padding: 20px;
+    }
+
+    .banner-text {
+        font-size: 36px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .highlight {
+        color: #fdb913;
+        font-size: 60px;
+    }
+
+    .banner-text {
+        font-size: 28px;
+    }
+
+    .highlight {
+        font-size: 40px;
+    }
+</style>
+
+
+<section class="logo-bar">
+    <div class="logo">
+        <img src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/300956288_411009054463258_1929620750288347284_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=m9q719wMKjwQ7kNvwFsCeUB&_nc_oc=AdksbQwaavL-H1ZriLtiCY2cJ4ivx2QdyPtNHDA6tTNOlvgWRnTXhKp-AluEjzyVw4t5GyftlCIgdi0GkGd_LGfM&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=pLx9eMQlLLOkyEhhX5MQ_w&oh=00_AfP5uzLG7IM9JqECfYMcV9yoPpPpA7yfrP_gcWAzqH_Flg&oe=68504CFB" alt="Logo">
+        <div class="logo-text">
+            UNIDAD EDUCATIVA<br><span>SANTA MARIA FE Y ALEGRIA</span>
+        </div>
+    </div>
+</section>
+
+<section class="banner">
+    <div class="banner-content">
+        <div class="banner-text">EDUCACIÓN QUE <span class="highlight">CAMBIA</span> AL MUNDO</div>
+    </div>
+</section>
