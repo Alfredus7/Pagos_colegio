@@ -4,110 +4,229 @@
 
 <style>
     /* ============================================= */
-    /*           Home                                */
+    /*           Global Styles                       */
     /* ============================================= */
-
-
-    .login-link {
-        color: white;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 16px;
+    :root {
+        --primary-color: #fd1313;
+        --secondary-color: #fdb913;
+        --dark-color: #333;
+        --light-color: #fff;
+        --overlay-color: rgba(0, 0, 0, 0.6);
     }
 
-    .logo-bar {
-        background: white;
-        padding: 20px;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Nunito', 'Segoe UI', sans-serif;
+        line-height: 1.6;
+        color: var(--dark-color);
+        background-color: var(--light-color);
+    }
+
+   
+    
+    .logo-container {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
-        border-bottom: 1px solid #ddd;
+        gap: 15px;
     }
 
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    .logo-img {
+        height: 60px;
+        width: auto;
     }
-
-        .logo img {
-            height: 50px;
-        }
 
     .logo-text {
-        color: black;
-        font-size: 18px;
+        font-size: 1.1rem;
+        line-height: 1.3;
     }
 
         .logo-text span {
-            color: #fd1313;
-            font-weight: bold;
+            color: var(--primary-color);
+            font-weight: 700;
+            display: block;
         }
 
-    .banner {
+    .nav-links {
+        display: flex;
+        gap: 25px;
+    }
+
+    .nav-link {
+        color: var(--dark-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: color 0.3s;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(253, 25, 25, 0.1);
+        }
+
+    .login-btn {
+        background-color: var(--primary-color);
+        color: var(--light-color);
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+        .login-btn:hover {
+            background-color: #d11111;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(253, 25, 25, 0.2);
+        }
+
+    /* ============================================= */
+    /*           Hero Banner                         */
+    /* ============================================= */
+    .hero {
         background-image: url('https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/505236380_2708860075991229_9094338492113779396_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=qogoPi98wHYQ7kNvwE1s-UT&_nc_oc=AdlpkQv27T2FZMME3Hp6mBDB_cF9Dus19lbthEbYp-k3S-dMyLpMKiUm9r56fDFepQsiSbzXaGzuyzRxSqXMxoYv&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=aGERSR_Qs35QWp5K-Dxy7g&oh=00_AfNwS-vT7EhgBx1ipHjjUcIk4b5FMijwu-aDtRbRXjOmzQ&oe=68504CF1');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        width: 100%;
         height: 100vh;
         display: flex;
-        justify-content: center;
         align-items: center;
         position: relative;
-        text-align: center;
-        color: white;
+        margin-top: 60px; /* To account for fixed header */
     }
 
-        .banner::before {
+        .hero::before {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
-            height: 100%;
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            z-index: 0;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+            z-index: 1;
         }
 
-    .banner-content {
-        z-index: 1;
-        padding: 20px;
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 5%;
+        position: relative;
+        z-index: 2;
+        color: var(--light-color);
     }
 
-    .banner-text {
-        font-size: 36px;
-        font-weight: bold;
-        color: #fff;
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    .highlight {
-        color: #fdb913;
-        font-size: 60px;
+    .hero-highlight {
+        color: var(--secondary-color);
+        font-size: 4rem;
+        display: inline-block;
     }
 
-    .banner-text {
-        font-size: 28px;
+    .hero-subtitle {
+        font-size: 1.5rem;
+        max-width: 600px;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
-    .highlight {
-        font-size: 40px;
+    .cta-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .primary-btn, .secondary-btn {
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .primary-btn {
+        background-color: var(--primary-color);
+        color: var(--light-color);
+    }
+
+        .primary-btn:hover {
+            background-color: #d11111;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(253, 25, 25, 0.3);
+        }
+
+    .secondary-btn {
+        background-color: transparent;
+        color: var(--light-color);
+        border: 2px solid var(--light-color);
+    }
+
+        .secondary-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+    .logo-container {
+        margin-bottom: 15px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-highlight {
+        font-size: 3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+
     }
 </style>
 
-
-<section class="logo-bar">
-    <div class="logo">
-        <img src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/300956288_411009054463258_1929620750288347284_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=m9q719wMKjwQ7kNvwFsCeUB&_nc_oc=AdksbQwaavL-H1ZriLtiCY2cJ4ivx2QdyPtNHDA6tTNOlvgWRnTXhKp-AluEjzyVw4t5GyftlCIgdi0GkGd_LGfM&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=pLx9eMQlLLOkyEhhX5MQ_w&oh=00_AfP5uzLG7IM9JqECfYMcV9yoPpPpA7yfrP_gcWAzqH_Flg&oe=68504CFB" alt="Logo">
-        <div class="logo-text">
-            UNIDAD EDUCATIVA<br><span>SANTA MARIA FE Y ALEGRIA</span>
-        </div>
+<!-- Header/Navbar -->
+<div class="logo-container">
+    <img class="logo-img" src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/300956288_411009054463258_1929620750288347284_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=m9q719wMKjwQ7kNvwFsCeUB&_nc_oc=AdksbQwaavL-H1ZriLtiCY2cJ4ivx2QdyPtNHDA6tTNOlvgWRnTXhKp-AluEjzyVw4t5GyftlCIgdi0GkGd_LGfM&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=pLx9eMQlLLOkyEhhX5MQ_w&oh=00_AfP5uzLG7IM9JqECfYMcV9yoPpPpA7yfrP_gcWAzqH_Flg&oe=68504CFB" alt="Logo">
+    <div class="logo-text">
+        UNIDAD EDUCATIVA<br><span>SANTA MARÍA FE Y ALEGRÍA</span>
     </div>
-</section>
-
-<section class="banner">
-    <div class="banner-content">
-        <div class="banner-text">EDUCACIÓN QUE <span class="highlight">CAMBIA</span> AL MUNDO</div>
+</div>
+<!-- Hero Banner -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">EDUCACIÓN QUE <span class="hero-highlight">TRANSFORMA</span> VIDAS</h1>
+        <p class="hero-subtitle">Fe y Alegría en Bolivia trabaja en Educación Regular promoviendo la formación integral holística de calidad de niños, niñas, adolescentes y jóvenes en los nueve departamentos de Bolivia.</p>
+        <div class="cta-buttons">
+            <a href="#" class="primary-btn">Conoce Nuestros Programas</a>
+            <a href="#" class="secondary-btn">Contáctanos</a>
+        </div>
     </div>
 </section>

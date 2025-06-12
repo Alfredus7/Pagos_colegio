@@ -252,6 +252,7 @@ tbody tr {
     position: fixed;
     bottom: 0;
     width: 100%;
+    z-index: 3;
     white-space: nowrap;
     line-height: 60px;
     background-color: var(--header-bg);
