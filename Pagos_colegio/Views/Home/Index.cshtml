@@ -2,231 +2,74 @@
     ViewData["Title"] = "Home Page";
 }
 
-<style>
-    /* ============================================= */
-    /*           Global Styles                       */
-    /* ============================================= */
-    :root {
-        --primary-color: #fd1313;
-        --secondary-color: #fdb913;
-        --dark-color: #333;
-        --light-color: #fff;
-        --overlay-color: rgba(0, 0, 0, 0.6);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Nunito', 'Segoe UI', sans-serif;
-        line-height: 1.6;
-        color: var(--dark-color);
-        background-color: var(--light-color);
-    }
-
-   
-    
-    .logo-container {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .logo-img {
-        height: 60px;
-        width: auto;
-    }
-
-    .logo-text {
-        font-size: 1.1rem;
-        line-height: 1.3;
-    }
-
-        .logo-text span {
-            color: var(--primary-color);
-            font-weight: 700;
-            display: block;
-        }
-
-    .nav-links {
-        display: flex;
-        gap: 25px;
-    }
-
-    .nav-link {
-        color: var(--dark-color);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: color 0.3s;
-        padding: 8px 12px;
-        border-radius: 4px;
-    }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-            background-color: rgba(253, 25, 25, 0.1);
-        }
-
-    .login-btn {
-        background-color: var(--primary-color);
-        color: var(--light-color);
-        padding: 10px 20px;
-        border-radius: 30px;
-        font-weight: 600;
-        transition: all 0.3s;
-        border: none;
-        cursor: pointer;
-    }
-
-        .login-btn:hover {
-            background-color: #d11111;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(253, 25, 25, 0.2);
-        }
-
-    /* ============================================= */
-    /*           Hero Banner                         */
-    /* ============================================= */
-    .hero {
-        background-image: url('https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/505236380_2708860075991229_9094338492113779396_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=qogoPi98wHYQ7kNvwE1s-UT&_nc_oc=AdlpkQv27T2FZMME3Hp6mBDB_cF9Dus19lbthEbYp-k3S-dMyLpMKiUm9r56fDFepQsiSbzXaGzuyzRxSqXMxoYv&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=aGERSR_Qs35QWp5K-Dxy7g&oh=00_AfNwS-vT7EhgBx1ipHjjUcIk4b5FMijwu-aDtRbRXjOmzQ&oe=68504CF1');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        position: relative;
-        margin-top: 60px; /* To account for fixed header */
-    }
-
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
-            z-index: 1;
-        }
-
-    .hero-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 5%;
-        position: relative;
-        z-index: 2;
-        color: var(--light-color);
-    }
-
-    .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        line-height: 1.2;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .hero-highlight {
-        color: var(--secondary-color);
-        font-size: 4rem;
-        display: inline-block;
-    }
-
-    .hero-subtitle {
-        font-size: 1.5rem;
-        max-width: 600px;
-        margin-bottom: 2rem;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    }
-
-    .cta-buttons {
-        display: flex;
-        gap: 15px;
-        margin-top: 30px;
-    }
-
-    .primary-btn, .secondary-btn {
-        padding: 12px 30px;
-        border-radius: 30px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s;
-    }
-
-    .primary-btn {
-        background-color: var(--primary-color);
-        color: var(--light-color);
-    }
-
-        .primary-btn:hover {
-            background-color: #d11111;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(253, 25, 25, 0.3);
-        }
-
-    .secondary-btn {
-        background-color: transparent;
-        color: var(--light-color);
-        border: 2px solid var(--light-color);
-    }
-
-        .secondary-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-        }
-
-    .logo-container {
-        margin-bottom: 15px;
-    }
-
-    .nav-links {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        width: 100%;
-    }
-
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .hero-highlight {
-        font-size: 3rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-
-    .cta-buttons {
-        flex-direction: column;
-    }
-
-    }
-</style>
-
-<!-- Header/Navbar -->
-<div class="logo-container">
-    <img class="logo-img" src="https://scontent-lim1-1.xx.fbcdn.net/v/t39.30808-6/300956288_411009054463258_1929620750288347284_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=m9q719wMKjwQ7kNvwFsCeUB&_nc_oc=AdksbQwaavL-H1ZriLtiCY2cJ4ivx2QdyPtNHDA6tTNOlvgWRnTXhKp-AluEjzyVw4t5GyftlCIgdi0GkGd_LGfM&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=pLx9eMQlLLOkyEhhX5MQ_w&oh=00_AfP5uzLG7IM9JqECfYMcV9yoPpPpA7yfrP_gcWAzqH_Flg&oe=68504CFB" alt="Logo">
-    <div class="logo-text">
-        UNIDAD EDUCATIVA<br><span>SANTA MARÍA FE Y ALEGRÍA</span>
+<!-- Seudo Header -->
+<div class="container-fluid bg-white py-2">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-start gap-3">
+            <img class="logo-img" src="https://www.feyalegria.org/bolivia/wp-content/uploads/sites/28/2023/01/fya-isotipo-color-web-2021.svg" alt="Logo" style="height: 60px;">
+            <div class="logo-text text-start">
+                <strong class="d-block">UNIDAD EDUCATIVA</strong>
+                <span class="text-danger fw-bold fs-5 d-block">SANTA MARÍA FE Y ALEGRÍA</span>
+            </div>
+        </div>
     </div>
 </div>
-<!-- Hero Banner -->
-<section class="hero">
-    <div class="hero-content">
-        <h1 class="hero-title">EDUCACIÓN QUE <span class="hero-highlight">TRANSFORMA</span> VIDAS</h1>
-        <p class="hero-subtitle">Fe y Alegría en Bolivia trabaja en Educación Regular promoviendo la formación integral holística de calidad de niños, niñas, adolescentes y jóvenes en los nueve departamentos de Bolivia.</p>
-        <div class="cta-buttons">
-            <a href="#" class="primary-btn">Conoce Nuestros Programas</a>
-            <a href="#" class="secondary-btn">Contáctanos</a>
+
+
+<!-- Hero Section -->
+<section class="hero position-relative text-white d-flex align-items-center" style="height: 100vh; overflow: hidden;">
+
+    <!-- Imagen de fondo semitransparente -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-image" style="
+        background-image: url('https://d3pugrm67vf9n7.cloudfront.net/wp-content/uploads/sites/28/2023/02/09101116/FOTOS-NI%C3%91OS-FYA.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.4;
+        z-index: 0;">
+    </div>
+
+    <!-- Overlay opcional oscuro para más contraste -->
+    <div class="position-absolute top-0 start-0 w-100 h-100"
+         style="background: linear-gradient(to right, rgba(0,0,0,0.6), rgba(0,0,0,0.3)); z-index: 1;">
+    </div>
+
+    <!-- Hero Content -->
+    <div class="container position-relative z-2">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-10 col-md-12">
+                <h1 class="display-4 fw-bold mb-3 text-shadow">
+                    EDUCACIÓN QUE <span class="text-warning fw-bold" style="font-size: inherit;">TRANSFORMA</span> VIDAS
+                </h1>
+
+
+                <p class="lead mb-4 text-shadow">
+                    Fe y Alegría en Bolivia trabaja en Educación Regular promoviendo la formación integral holística de calidad de niños, niñas, adolescentes y jóvenes en los nueve departamentos de Bolivia.
+                </p>
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                    <a href="#" class="btn btn-danger btn-lg rounded-pill px-4">Conoce Nuestros Programas</a>
+                    <a href="#" class="btn btn-outline-light btn-lg rounded-pill px-4">Contáctanos</a>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+
+<!-- Custom CSS -->
+<style>
+    .text-shadow {
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .logo-text {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .logo-text {
+        text-align: center;
+    }
+</style>
